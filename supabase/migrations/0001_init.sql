@@ -25,13 +25,7 @@ begin
 end;
 $$;
 
-create or replace function is_manager(p_user uuid) returns boolean
-language sql stable security definer set search_path = public as $$
-  select exists (
-    select 1 from profiles
-    where id = p_user and role = 'manager' and active
-  );
-$$;
+-- is_manager() is defined AFTER the profiles table — see below.
 
 -- ---------------------------------------------------------------------
 -- profiles (extends auth.users)
@@ -52,6 +46,16 @@ create trigger profiles_updated_at
   for each row execute function set_updated_at();
 
 create unique index profiles_display_name_lower on profiles (lower(display_name));
+
+-- is_manager() must be defined AFTER profiles because language sql
+-- function bodies are validated at create time.
+create or replace function is_manager(p_user uuid) returns boolean
+language sql stable security definer set search_path = public as $$
+  select exists (
+    select 1 from profiles
+    where id = p_user and role = 'manager' and active
+  );
+$$;
 
 -- ---------------------------------------------------------------------
 -- checklist templates and runs
