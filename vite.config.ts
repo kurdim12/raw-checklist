@@ -25,7 +25,7 @@ export default defineConfig({
       ],
     },
     workbox: {
-      globPatterns: ['**/*.{js,css,html,svg,png,woff2}'],
+      globPatterns: ['**/*.{js,css,svg,png,woff2}'],
       // Replace the previous SW immediately so users don't get stuck on
       // a stale index.html pointing at deleted JS chunks.
       skipWaiting: true,
@@ -34,6 +34,18 @@ export default defineConfig({
       navigateFallback: '/index.html',
       navigateFallbackDenylist: [/^\/rest\/v1\//, /^\/auth\/v1\//],
       runtimeCaching: [
+        {
+          // Always fetch fresh HTML for navigations — falls back to the
+          // cached index.html only when offline. Fixes the "blank olive
+          // page on refresh after deploy" bug where the precached
+          // index.html still pointed at old JS chunk hashes that 404.
+          urlPattern: ({ request }) => request.mode === 'navigate',
+          handler: 'NetworkFirst',
+          options: {
+            cacheName: 'navigation',
+            networkTimeoutSeconds: 3,
+          },
+        },
         {
           urlPattern: ({ url }) => url.pathname.startsWith('/rest/v1/'),
           handler: 'NetworkFirst',
