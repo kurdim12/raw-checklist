@@ -3,6 +3,7 @@ import { Layout } from './components/Layout';
 import { RequireAuth } from './routes/RequireAuth';
 import { LoginRoute } from './routes/Login';
 import { HomeRoute } from './routes/Home';
+import { ChecklistRoute } from './routes/Checklist';
 import {
   ChecklistIndexRoute,
   InventoryRoute,
@@ -26,7 +27,7 @@ export default function App() {
       >
         <Route index element={<HomeRoute />} />
         <Route path="checklist" element={<ChecklistIndexRoute />} />
-        <Route path="checklist/today/:shift" element={<ChecklistIndexRoute />} />
+        <Route path="checklist/today/:shift" element={<ChecklistRoute />} />
         <Route path="inventory" element={<InventoryRoute />} />
         <Route path="inventory/log" element={<InventoryLogRoute />} />
         <Route path="orders" element={<OrdersRoute />} />
