@@ -79,8 +79,10 @@ The function debounces per item via the `low_stock_debounce_hours` setting (defa
    - `VITE_SUPABASE_URL`
    - `VITE_SUPABASE_ANON_KEY`
    - *(do **not** add `SUPABASE_SERVICE_ROLE_KEY` here — it's not used by the client; it would just sit in env. Only the seed scripts and Edge Function need it, and those run elsewhere.)*
-5. Deploy. SPA deep links work because `public/_redirects` ships `/* /index.html 200`.
+5. Deploy. SPA deep links work because Cloudflare's Workers + Static Assets wizard auto-generates a `wrangler.jsonc` with `not_found_handling: "single-page-application"` on first deploy.
 6. PWA install: open the deployed URL on iOS/Android → "Add to Home Screen".
+
+> If you're on classic Cloudflare Pages (not Workers + Static Assets), add a `public/_redirects` file with `/*  /index.html  200` instead — but don't have both, or the deploy fails with "Infinite loop detected" (error 10021).
 
 The Supabase project is the source of truth for the schema — keep migrations in this repo and apply them via `psql -f` or `supabase db push`.
 
