@@ -1,0 +1,45 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 24 35% 12%;       /* espresso */
+    --foreground: 33 60% 90%;       /* cream */
+    --card: 24 30% 16%;
+    --card-foreground: 33 60% 90%;
+    --popover: 24 30% 14%;
+    --popover-foreground: 33 60% 90%;
+    --primary: 33 60% 80%;          /* cream-ish */
+    --primary-foreground: 24 35% 12%;
+    --secondary: 24 25% 22%;
+    --secondary-foreground: 33 60% 90%;
+    --muted: 24 20% 22%;
+    --muted-foreground: 33 25% 70%;
+    --accent: 33 65% 65%;
+    --accent-foreground: 24 35% 12%;
+    --destructive: 0 70% 55%;
+    --destructive-foreground: 33 60% 95%;
+    --border: 24 20% 24%;
+    --input: 24 20% 20%;
+    --ring: 33 60% 70%;
+    --radius: 0.75rem;
+  }
+
+  body {
+    @apply bg-background text-foreground min-h-screen font-sans;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  html[dir="rtl"] body {
+    @apply font-arabic;
+  }
+
+  /* Phone-first safe-area padding (iOS notch / Android nav bar) */
+  .safe-top    { padding-top: env(safe-area-inset-top); }
+  .safe-bottom { padding-bottom: env(safe-area-inset-bottom); }
+}
+
+@layer components {
+  .tap-target { @apply min-h-[44px] min-w-[44px]; }
+}

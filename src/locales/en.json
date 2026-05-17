@@ -1,0 +1,174 @@
+{
+  "app": {
+    "name": "Raw Smith Ops",
+    "tagline": "Checklist, stock, schedule — in your pocket."
+  },
+  "nav": {
+    "home": "Home",
+    "checklist": "Checklist",
+    "inventory": "Inventory",
+    "orders": "Orders",
+    "schedule": "Schedule",
+    "admin": "Admin",
+    "logout": "Sign out"
+  },
+  "auth": {
+    "signIn": "Sign in",
+    "email": "Email",
+    "password": "Password",
+    "magicLink": "Sign in with magic link",
+    "magicLinkSent": "Check your email for the magic link",
+    "wrongCredentials": "Wrong email or password",
+    "loading": "Signing in…",
+    "signedInAs": "Signed in as",
+    "signOut": "Sign out"
+  },
+  "home": {
+    "todayIs": "Today is",
+    "openingShift": "Opening shift",
+    "closingShift": "Closing shift",
+    "notStarted": "Not started",
+    "inProgress": "In progress",
+    "done": "Done",
+    "tickedOf": "{{done}} of {{total}} ticked",
+    "openedBy": "Opened by {{name}}",
+    "closedBy": "Closed by {{name}}",
+    "nextShift": "My next shift",
+    "noUpcomingShift": "No upcoming shift scheduled",
+    "lowStock": "Low stock",
+    "lowStockCount_one": "{{count}} item to reorder",
+    "lowStockCount_other": "{{count}} items to reorder",
+    "quickLog": "Log inventory change"
+  },
+  "checklist": {
+    "section": {
+      "outside": "Outside",
+      "inside": "Inside",
+      "operation": "Operation",
+      "end_shift": "End of shift",
+      "handover": "Handover"
+    },
+    "shift": {
+      "opening": "Opening shift",
+      "closing": "Closing shift"
+    },
+    "start": "Start shift",
+    "markComplete": "Mark shift complete",
+    "addNote": "Add note",
+    "alreadyClosed": "Shift closed at {{time}} by {{name}}",
+    "notScheduled": "You're not scheduled today — only the on-duty staff can close this shift.",
+    "showInstructions": "Instructions",
+    "frequencyOnly": "Only on Mon / Thu / Fri",
+    "empty": "Nothing to do here yet"
+  },
+  "inventory": {
+    "title": "Inventory",
+    "search": "Search items",
+    "filter": {
+      "all": "All",
+      "low": "Low stock"
+    },
+    "state": {
+      "ok": "OK",
+      "low": "Low",
+      "out": "Order"
+    },
+    "addItem": "Add item",
+    "editItem": "Edit item",
+    "name": "Name (English)",
+    "nameAr": "Name (Arabic)",
+    "unit": "Unit",
+    "quantity": "Current quantity",
+    "minLevel": "Min level (reorder at)",
+    "parLevel": "Par level (target after reorder)",
+    "supplier": "Supplier",
+    "notes": "Notes",
+    "history": "Movements history",
+    "verifyQuantity": "Verify quantity — was imported as a date from old sheet",
+    "log": {
+      "title": "Log inventory change",
+      "item": "Item",
+      "delta": "Change",
+      "reason": "Reason",
+      "reasons": {
+        "restock": "Restock",
+        "daily_use": "Used",
+        "waste": "Waste",
+        "correction": "Correction",
+        "order_received": "Order received"
+      },
+      "note": "Note (optional)",
+      "save": "Save change",
+      "saved": "Saved"
+    }
+  },
+  "orders": {
+    "title": "Stock orders",
+    "createFromLow": "Create order from low stock",
+    "sendOrder": "Send order",
+    "markReceived": "Mark received",
+    "cancel": "Cancel order",
+    "status": {
+      "draft": "Draft",
+      "sent": "Sent",
+      "received": "Received",
+      "cancelled": "Cancelled"
+    },
+    "noLowStock": "Nothing is low — no order needed.",
+    "empty": "No orders yet"
+  },
+  "schedule": {
+    "title": "Schedule",
+    "today": "Today",
+    "thisWeek": "This week",
+    "nextWeek": "Next week",
+    "prevWeek": "Previous week",
+    "copyLastWeek": "Copy last week",
+    "exportImage": "Export image",
+    "off": "OFF",
+    "free": "Free-time",
+    "role": {
+      "artist": "Artist",
+      "assistant": "Assistant",
+      "free": "Free"
+    }
+  },
+  "admin": {
+    "title": "Admin",
+    "tabs": {
+      "templates": "Templates",
+      "categories": "Categories",
+      "staff": "Staff",
+      "settings": "Settings"
+    },
+    "managerOnly": "Manager access only",
+    "settings": {
+      "openHours": "Open hours",
+      "lowStockDebounce": "Low-stock debounce (hours)",
+      "whatsappWebhook": "WhatsApp webhook URL"
+    },
+    "staff": {
+      "invite": "Invite user",
+      "resetPassword": "Reset password",
+      "deactivate": "Deactivate",
+      "activate": "Activate"
+    }
+  },
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "yes": "Yes",
+    "no": "No",
+    "loading": "Loading…",
+    "error": "Something went wrong",
+    "retry": "Try again",
+    "search": "Search",
+    "back": "Back",
+    "close": "Close",
+    "language": "Language",
+    "english": "English",
+    "arabic": "العربية"
+  }
+}

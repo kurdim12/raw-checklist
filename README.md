@@ -65,18 +65,24 @@ The simplest free route is [CallMeBot](https://www.callmebot.com/blog/free-api-w
 
 The function debounces per item via the `low_stock_debounce_hours` setting (default 12h).
 
-## Production deploy
+## Production deploy — Cloudflare Pages
 
-```bash
-# frontend (Vercel)
-vercel link
-vercel env add VITE_SUPABASE_URL
-vercel env add VITE_SUPABASE_ANON_KEY
-vercel --prod
+1. Push the repo to GitHub (you already have the branch on `kurdim12/raw-checklist`).
+2. In Cloudflare Dashboard → **Workers & Pages → Create → Pages → Connect to Git**, pick the repo and the branch.
+3. Build settings:
+   - **Framework preset:** Vite
+   - **Build command:** `npm run build`
+   - **Build output directory:** `dist`
+   - **Root directory:** *(leave blank)*
+   - **Node version:** `20`
+4. **Environment variables** (Production *and* Preview):
+   - `VITE_SUPABASE_URL`
+   - `VITE_SUPABASE_ANON_KEY`
+   - *(do **not** add `SUPABASE_SERVICE_ROLE_KEY` here — it's not used by the client; it would just sit in env. Only the seed scripts and Edge Function need it, and those run elsewhere.)*
+5. Deploy. SPA deep links work because `public/_redirects` ships `/* /index.html 200`.
+6. PWA install: open the deployed URL on iOS/Android → "Add to Home Screen".
 
-# supabase project is the source of truth — keep migrations in this repo
-supabase db push
-```
+The Supabase project is the source of truth for the schema — keep migrations in this repo and apply them via `psql -f` or `supabase db push`.
 
 ## Layout
 

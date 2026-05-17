@@ -1,0 +1,174 @@
+{
+  "app": {
+    "name": "راو سميث أوبس",
+    "tagline": "تشيك ليست، مخزون، جدول — كله بجيبك."
+  },
+  "nav": {
+    "home": "الرئيسية",
+    "checklist": "التشيك ليست",
+    "inventory": "المخزون",
+    "orders": "الطلبات",
+    "schedule": "الجدول",
+    "admin": "الإدارة",
+    "logout": "تسجيل خروج"
+  },
+  "auth": {
+    "signIn": "تسجيل دخول",
+    "email": "الإيميل",
+    "password": "كلمة السر",
+    "magicLink": "دخول بلينك على الإيميل",
+    "magicLinkSent": "افحص إيميلك — وصلك لينك الدخول",
+    "wrongCredentials": "إيميل أو كلمة سر غلط",
+    "loading": "بسجّل دخول…",
+    "signedInAs": "مسجّل بإسم",
+    "signOut": "تسجيل خروج"
+  },
+  "home": {
+    "todayIs": "اليوم",
+    "openingShift": "شيفت الصباح",
+    "closingShift": "شيفت المسا",
+    "notStarted": "ما بدأ بعد",
+    "inProgress": "شغّال",
+    "done": "خلص",
+    "tickedOf": "{{done}} من {{total}}",
+    "openedBy": "فتحه {{name}}",
+    "closedBy": "سكّره {{name}}",
+    "nextShift": "شيفتي الجاي",
+    "noUpcomingShift": "ما في شيفت محدّد إلك",
+    "lowStock": "ناقص بالمخزون",
+    "lowStockCount_one": "غرض واحد لازم تطلبه",
+    "lowStockCount_other": "{{count}} أغراض لازم تطلبهم",
+    "quickLog": "سجّل تغيير بالمخزون"
+  },
+  "checklist": {
+    "section": {
+      "outside": "برّا",
+      "inside": "جوّا",
+      "operation": "التشغيل",
+      "end_shift": "نهاية الشيفت",
+      "handover": "التسليم"
+    },
+    "shift": {
+      "opening": "شيفت الصباح",
+      "closing": "شيفت المسا"
+    },
+    "start": "ابدأ الشيفت",
+    "markComplete": "ختام الشيفت",
+    "addNote": "أضف ملاحظة",
+    "alreadyClosed": "الشيفت سكّر الساعة {{time}} من {{name}}",
+    "notScheduled": "إنت مش على الجدول اليوم — بس اللي على الشيفت بقدر يسكّره.",
+    "showInstructions": "التفاصيل",
+    "frequencyOnly": "بس يوم الإثنين / الخميس / الجمعة",
+    "empty": "ما في إشي هون"
+  },
+  "inventory": {
+    "title": "المخزون",
+    "search": "ابحث عن صنف",
+    "filter": {
+      "all": "الكل",
+      "low": "ناقص"
+    },
+    "state": {
+      "ok": "تمام",
+      "low": "ناقص",
+      "out": "اطلب"
+    },
+    "addItem": "أضف صنف",
+    "editItem": "تعديل الصنف",
+    "name": "الاسم (إنجليزي)",
+    "nameAr": "الاسم (عربي)",
+    "unit": "الوحدة",
+    "quantity": "الكمية الحالية",
+    "minLevel": "الحد الأدنى (اطلب لما يوصل)",
+    "parLevel": "الكمية المثالية (بعد التعبئة)",
+    "supplier": "المورّد",
+    "notes": "ملاحظات",
+    "history": "حركة المخزون",
+    "verifyQuantity": "تأكد من الكمية — انكتبت كتاريخ بالشيت القديم",
+    "log": {
+      "title": "سجّل تغيير بالمخزون",
+      "item": "الصنف",
+      "delta": "التغيير",
+      "reason": "السبب",
+      "reasons": {
+        "restock": "تعبئة",
+        "daily_use": "استهلاك",
+        "waste": "هدر",
+        "correction": "تصحيح",
+        "order_received": "وصلت طلبية"
+      },
+      "note": "ملاحظة (اختياري)",
+      "save": "احفظ",
+      "saved": "تم الحفظ"
+    }
+  },
+  "orders": {
+    "title": "طلبات المخزون",
+    "createFromLow": "اعمل طلبية من الأصناف الناقصة",
+    "sendOrder": "أرسل الطلبية",
+    "markReceived": "وصلت",
+    "cancel": "ألغي الطلبية",
+    "status": {
+      "draft": "مسودّة",
+      "sent": "مُرسلة",
+      "received": "وصلت",
+      "cancelled": "ملغية"
+    },
+    "noLowStock": "ما في إشي ناقص — مش لازم طلبية.",
+    "empty": "ما في طلبات لسا"
+  },
+  "schedule": {
+    "title": "الجدول",
+    "today": "اليوم",
+    "thisWeek": "هالأسبوع",
+    "nextWeek": "الأسبوع الجاي",
+    "prevWeek": "الأسبوع اللي راح",
+    "copyLastWeek": "انسخ الأسبوع اللي راح",
+    "exportImage": "صدّر كصورة",
+    "off": "إجازة",
+    "free": "وقت حر",
+    "role": {
+      "artist": "أرتيست",
+      "assistant": "مساعد",
+      "free": "حر"
+    }
+  },
+  "admin": {
+    "title": "الإدارة",
+    "tabs": {
+      "templates": "القوالب",
+      "categories": "الفئات",
+      "staff": "الموظفين",
+      "settings": "الإعدادات"
+    },
+    "managerOnly": "للمدير فقط",
+    "settings": {
+      "openHours": "ساعات الدوام",
+      "lowStockDebounce": "فاصل تنبيه النقص (ساعات)",
+      "whatsappWebhook": "رابط ويب هوك الواتساب"
+    },
+    "staff": {
+      "invite": "ادعو موظف",
+      "resetPassword": "إعادة تعيين كلمة السر",
+      "deactivate": "إلغاء التفعيل",
+      "activate": "تفعيل"
+    }
+  },
+  "common": {
+    "save": "احفظ",
+    "cancel": "إلغاء",
+    "delete": "حذف",
+    "edit": "تعديل",
+    "yes": "نعم",
+    "no": "لا",
+    "loading": "بحمّل…",
+    "error": "صار خلل",
+    "retry": "حاول ثاني",
+    "search": "ابحث",
+    "back": "رجوع",
+    "close": "إغلاق",
+    "language": "اللغة",
+    "english": "English",
+    "arabic": "العربية"
+  }
+}
