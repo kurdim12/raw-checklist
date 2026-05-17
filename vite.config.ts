@@ -26,6 +26,13 @@ export default defineConfig({
     },
     workbox: {
       globPatterns: ['**/*.{js,css,html,svg,png,woff2}'],
+      // Replace the previous SW immediately so users don't get stuck on
+      // a stale index.html pointing at deleted JS chunks.
+      skipWaiting: true,
+      clientsClaim: true,
+      cleanupOutdatedCaches: true,
+      navigateFallback: '/index.html',
+      navigateFallbackDenylist: [/^\/rest\/v1\//, /^\/auth\/v1\//],
       runtimeCaching: [
         {
           urlPattern: ({ url }) => url.pathname.startsWith('/rest/v1/'),
