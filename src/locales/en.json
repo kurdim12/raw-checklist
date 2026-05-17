@@ -149,9 +149,23 @@
     },
     "staff": {
       "invite": "Invite user",
+      "inviteTitle": "Invite a new user",
+      "inviteSubmit": "Send invite",
+      "displayName": "Display name",
+      "email": "Email",
+      "role": "Role",
+      "roleManager": "Manager",
+      "roleBarista": "Barista",
       "resetPassword": "Reset password",
+      "resetPasswordTitle": "Set a new password",
+      "resetPasswordHelp": "The user can sign in with this password and change it later.",
+      "newPassword": "New password",
       "deactivate": "Deactivate",
-      "activate": "Activate"
+      "activate": "Activate",
+      "statusActive": "Active",
+      "statusInactive": "Inactive",
+      "invited": "User invited",
+      "passwordChanged": "Password updated"
     }
   },
   "common": {

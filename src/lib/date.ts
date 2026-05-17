@@ -22,6 +22,12 @@ export function shortTime(t: string | null | undefined): string {
   return t.slice(0, 5);
 }
 
+/** Format a timestamptz in Asia/Amman wall-clock 'HH:mm'. '' if null. */
+export function formatAmmanTime(iso: string | null | undefined): string {
+  if (!iso) return '';
+  return formatInTimeZone(new Date(iso), CAFE_TZ, 'HH:mm');
+}
+
 /** Mon=1 ... Sun=7 in ISO terms — matches Postgres extract(isodow). */
 export function isoWeekday(iso: string): number {
   const [y, m, d] = iso.split('-').map(Number);

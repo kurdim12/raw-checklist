@@ -16,7 +16,7 @@ import {
   useToggleRunItem,
   type RunItemWithTemplate,
 } from '@/features/checklist/queries';
-import { shortTime } from '@/lib/date';
+import { formatAmmanTime } from '@/lib/date';
 import { cn } from '@/lib/utils';
 import type { ShiftType } from '@/types/database';
 
@@ -106,7 +106,7 @@ export function ChecklistRoute() {
             <Lock className="h-4 w-4" />
             <span>
               {t('checklist.alreadyClosed', {
-                time: runQuery.data.run.closed_at ? shortTime(new Date(runQuery.data.run.closed_at).toISOString().slice(11, 16)) : '',
+                time: formatAmmanTime(runQuery.data.run.closed_at),
                 name: runQuery.data.run.closed_by ?? '',
               })}
             </span>

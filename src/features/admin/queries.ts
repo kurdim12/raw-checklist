@@ -25,7 +25,7 @@ export function useUpdateSetting() {
     mutationFn: async (args: { key: string; value: unknown }) => {
       const { error } = await supabase
         .from('settings')
-        .update({ value: args.value, updated_at: new Date().toISOString() })
+        .update({ value: args.value })
         .eq('key', args.key);
       if (error) throw error;
     },

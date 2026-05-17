@@ -44,10 +44,7 @@ export function useWeekShifts(weekStartIso: string) {
   return useQuery({
     queryKey: ['weekShifts', weekStartIso],
     queryFn: async (): Promise<Shift[]> => {
-      const start = new Date(weekStartIso);
-      const end = new Date(start);
-      end.setDate(end.getDate() + 6);
-      const endIso = end.toISOString().slice(0, 10);
+      const endIso = addDays(weekStartIso, 6);
       const { data, error } = await supabase
         .from('shifts')
         .select('*')

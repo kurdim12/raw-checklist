@@ -149,9 +149,23 @@
     },
     "staff": {
       "invite": "ادعو موظف",
+      "inviteTitle": "ادعو موظف جديد",
+      "inviteSubmit": "ابعت الدعوة",
+      "displayName": "الاسم",
+      "email": "الإيميل",
+      "role": "الدور",
+      "roleManager": "مدير",
+      "roleBarista": "باريستا",
       "resetPassword": "إعادة تعيين كلمة السر",
+      "resetPasswordTitle": "كلمة سر جديدة",
+      "resetPasswordHelp": "بيقدر يدخل بهالكلمة وبعدين يغيّرها.",
+      "newPassword": "كلمة السر الجديدة",
       "deactivate": "إلغاء التفعيل",
-      "activate": "تفعيل"
+      "activate": "تفعيل",
+      "statusActive": "مفعّل",
+      "statusInactive": "غير مفعّل",
+      "invited": "تمت الدعوة",
+      "passwordChanged": "تم تحديث كلمة السر"
     }
   },
   "common": {
