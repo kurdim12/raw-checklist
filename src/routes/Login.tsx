@@ -118,6 +118,10 @@ export function LoginRoute() {
             <Button type="button" variant="link" className="w-full" onClick={() => setMagicMode((m) => !m)}>
               {magicMode ? t('auth.signIn') : t('auth.magicLink')}
             </Button>
+
+            <p className="pt-2 text-center text-xs text-muted-foreground">
+              {t('auth.forgotPasswordHelp')}
+            </p>
           </form>
         </CardContent>
       </Card>

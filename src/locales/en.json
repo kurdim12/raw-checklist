@@ -21,7 +21,17 @@
     "wrongCredentials": "Wrong email or password",
     "loading": "Signing in…",
     "signedInAs": "Signed in as",
-    "signOut": "Sign out"
+    "signOut": "Sign out",
+    "forgotPasswordHelp": "Forgot your password? Ask the manager to reset it in Admin → Staff.",
+    "changePassword": "Change my password",
+    "changePasswordTitle": "Change password",
+    "changePasswordForced": "You're using the default password. Please pick a new one before continuing.",
+    "changePasswordHelp": "Choose a password at least 8 characters long.",
+    "newPassword": "New password",
+    "confirmPassword": "Confirm password",
+    "passwordMinLength": "Password must be at least 8 characters",
+    "passwordMismatch": "Passwords don't match",
+    "passwordChanged": "Password updated"
   },
   "home": {
     "todayIs": "Today is",

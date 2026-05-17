@@ -2,6 +2,7 @@ import { Route, Routes } from 'react-router-dom';
 import { Layout } from './components/Layout';
 import { RequireAuth } from './routes/RequireAuth';
 import { LoginRoute } from './routes/Login';
+import { ChangePasswordRoute } from './routes/ChangePassword';
 import { HomeRoute } from './routes/Home';
 import { ChecklistRoute } from './routes/Checklist';
 import { ChecklistIndexRoute } from './routes/ChecklistIndex';
@@ -16,6 +17,14 @@ export default function App() {
   return (
     <Routes>
       <Route path="/login" element={<LoginRoute />} />
+      <Route
+        path="/change-password"
+        element={
+          <RequireAuth>
+            <ChangePasswordRoute />
+          </RequireAuth>
+        }
+      />
       <Route
         element={
           <RequireAuth>

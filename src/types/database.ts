@@ -17,6 +17,7 @@ export interface Profile {
   role: StaffRole;
   phone: string | null;
   active: boolean;
+  must_change_password: boolean;
   created_at: string;
   updated_at: string;
 }

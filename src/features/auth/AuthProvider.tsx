@@ -10,6 +10,7 @@ interface AuthState {
   signIn: (email: string, password: string) => Promise<void>;
   signInMagicLink: (email: string) => Promise<void>;
   signOut: () => Promise<void>;
+  refreshProfile: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthState | undefined>(undefined);
@@ -84,6 +85,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       },
       signOut: async () => {
         await supabase.auth.signOut();
+      },
+      refreshProfile: async () => {
+        if (!session?.user.id) return;
+        try {
+          const p = await fetchProfile(session.user.id);
+          setProfile(p);
+        } catch {
+          setProfile(null);
+        }
       },
     }),
     [session, profile, loading],

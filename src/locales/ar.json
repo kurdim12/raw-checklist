@@ -21,7 +21,17 @@
     "wrongCredentials": "إيميل أو كلمة سر غلط",
     "loading": "بسجّل دخول…",
     "signedInAs": "مسجّل بإسم",
-    "signOut": "تسجيل خروج"
+    "signOut": "تسجيل خروج",
+    "forgotPasswordHelp": "نسيت كلمة السر؟ خلّي المدير يعمل لك Reset من Admin → Staff.",
+    "changePassword": "غيّر كلمة السر",
+    "changePasswordTitle": "تغيير كلمة السر",
+    "changePasswordForced": "إنت بتستخدم كلمة السر الافتراضية. اختار وحدة جديدة قبل ما تكمّل.",
+    "changePasswordHelp": "اختار كلمة سر مكوّنة من 8 أحرف أو أكثر.",
+    "newPassword": "كلمة سر جديدة",
+    "confirmPassword": "أكّد كلمة السر",
+    "passwordMinLength": "كلمة السر لازم 8 أحرف أو أكثر",
+    "passwordMismatch": "كلمات السر ما متطابقات",
+    "passwordChanged": "تم تحديث كلمة السر"
   },
   "home": {
     "todayIs": "اليوم",
