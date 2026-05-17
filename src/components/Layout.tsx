@@ -1,6 +1,6 @@
 import { NavLink, Outlet } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Home, ClipboardCheck, Package, Calendar, Settings } from 'lucide-react';
+import { Home, ClipboardCheck, Package, Calendar, Settings, Droplet } from 'lucide-react';
 import { LangSwitch } from './LangSwitch';
 import { useAuth } from '@/features/auth/AuthProvider';
 import { isManager } from '@/lib/rls';
@@ -16,7 +16,9 @@ export function Layout() {
       <header className="sticky top-0 z-10 border-b border-border bg-card/80 backdrop-blur safe-top">
         <div className="container flex h-14 items-center justify-between gap-2">
           <div className="flex items-center gap-2">
-            <div className="h-7 w-7 rounded bg-accent text-accent-foreground text-xs font-bold grid place-items-center">RS</div>
+            <div className="h-7 w-7 rounded-full bg-cream text-olive-700 grid place-items-center">
+              <Droplet className="h-4 w-4" fill="currentColor" />
+            </div>
             <span className="font-semibold tracking-tight">{t('app.name')}</span>
           </div>
           <div className="flex items-center gap-1">

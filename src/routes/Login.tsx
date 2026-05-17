@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Coffee, Mail } from 'lucide-react';
+import { Droplet, Mail } from 'lucide-react';
 import { useAuth } from '@/features/auth/AuthProvider';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -73,8 +73,8 @@ export function LoginRoute() {
       <div className="absolute top-4 right-4"><LangSwitch /></div>
 
       <div className="mb-6 flex flex-col items-center gap-2">
-        <div className="h-14 w-14 rounded-full bg-accent text-accent-foreground grid place-items-center shadow-lg">
-          <Coffee className="h-7 w-7" />
+        <div className="h-14 w-14 rounded-full bg-cream text-olive-700 grid place-items-center shadow-lg">
+          <Droplet className="h-7 w-7" fill="currentColor" />
         </div>
         <h1 className="text-2xl font-bold tracking-tight">{t('app.name')}</h1>
         <p className="text-sm text-muted-foreground">{t('app.tagline')}</p>
