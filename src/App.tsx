@@ -4,15 +4,13 @@ import { RequireAuth } from './routes/RequireAuth';
 import { LoginRoute } from './routes/Login';
 import { HomeRoute } from './routes/Home';
 import { ChecklistRoute } from './routes/Checklist';
-import {
-  ChecklistIndexRoute,
-  InventoryRoute,
-  InventoryLogRoute,
-  OrdersRoute,
-  ScheduleRoute,
-  AdminRoute,
-  ProfileRoute,
-} from './routes/stubs';
+import { ChecklistIndexRoute } from './routes/ChecklistIndex';
+import { InventoryRoute } from './routes/Inventory';
+import { InventoryLogRoute } from './routes/InventoryLog';
+import { OrdersRoute } from './routes/Orders';
+import { ScheduleRoute } from './routes/Schedule';
+import { AdminRoute } from './routes/Admin';
+import { ProfileRoute } from './routes/Profile';
 
 export default function App() {
   return (
