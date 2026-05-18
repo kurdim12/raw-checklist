@@ -217,8 +217,19 @@
     "search": "Search",
     "back": "Back",
     "close": "Close",
+    "reset": "Reset",
     "language": "Language",
     "english": "English",
     "arabic": "العربية"
+  },
+  "stockCount": {
+    "title": "Stock count",
+    "subtitle": "Type the actual quantity for each item. Untouched rows are skipped.",
+    "systemSays": "System",
+    "firstCount": "First count",
+    "nullHint": "items have never been counted. Type a number to set the starting quantity.",
+    "noChanges": "No changes",
+    "saveCta": "Save count ({{count}})",
+    "saved": "Counted {{count}} items"
   }
 }

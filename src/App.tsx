@@ -8,6 +8,7 @@ import { ChecklistRoute } from './routes/Checklist';
 import { ChecklistIndexRoute } from './routes/ChecklistIndex';
 import { InventoryRoute } from './routes/Inventory';
 import { InventoryLogRoute } from './routes/InventoryLog';
+import { StockCountRoute } from './routes/StockCount';
 import { OrdersRoute } from './routes/Orders';
 import { ScheduleRoute } from './routes/Schedule';
 import { AdminRoute } from './routes/Admin';
@@ -39,6 +40,7 @@ export default function App() {
         <Route path="checklist/today/:shift" element={<ChecklistRoute />} />
         <Route path="inventory" element={<InventoryRoute />} />
         <Route path="inventory/log" element={<InventoryLogRoute />} />
+        <Route path="inventory/count" element={<StockCountRoute />} />
         <Route path="orders" element={<OrdersRoute />} />
         <Route path="schedule" element={<ScheduleRoute />} />
         <Route path="admin" element={<AdminRoute />} />

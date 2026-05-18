@@ -86,3 +86,26 @@ export function useApplyMovement() {
     },
   });
 }
+
+export interface BulkUpdateRow {
+  item_id: string;
+  quantity: number;
+}
+
+export function useBulkUpdateInventory() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (updates: BulkUpdateRow[]) => {
+      if (updates.length === 0) return { count: 0 };
+      const { error } = await supabase.rpc('admin_bulk_update_inventory', {
+        p_updates: updates,
+      });
+      if (error) throw error;
+      return { count: updates.length };
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['inventory'] });
+      qc.invalidateQueries({ queryKey: ['lowStockCount'] });
+    },
+  });
+}

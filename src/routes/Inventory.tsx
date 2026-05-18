@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Search, Plus, AlertTriangle, ChevronRight, Package } from 'lucide-react';
+import { Search, Plus, AlertTriangle, ChevronRight, Package, ClipboardCheck } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
@@ -9,18 +9,22 @@ import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { stockState, useInventory, type InventoryItemRow } from '@/features/inventory/queries';
+import { useAuth } from '@/features/auth/AuthProvider';
+import { isManager } from '@/lib/rls';
 import { cn } from '@/lib/utils';
 
 type Filter = 'all' | 'low';
 
 export function InventoryRoute() {
   const { t, i18n } = useTranslation();
+  const { profile } = useAuth();
   const [params, setParams] = useSearchParams();
   const initialFilter: Filter = params.get('filter') === 'low' ? 'low' : 'all';
   const [filter, setFilter] = useState<Filter>(initialFilter);
   const [search, setSearch] = useState('');
 
   const isAr = i18n.language.startsWith('ar');
+  const manager = isManager(profile);
   const { data, isLoading } = useInventory();
 
   const grouped = useMemo(() => {
@@ -58,7 +62,15 @@ export function InventoryRoute() {
     <div className="space-y-4 pb-24">
       <header className="flex flex-wrap items-center justify-between gap-2">
         <h1 className="text-2xl font-bold tracking-tight">{t('inventory.title')}</h1>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
+          {manager && (
+            <Link to="/inventory/count">
+              <Button size="sm" variant="outline" className="gap-1">
+                <ClipboardCheck className="h-4 w-4" />
+                {t('stockCount.title')}
+              </Button>
+            </Link>
+          )}
           <Link to="/orders">
             <Button size="sm" variant="outline" className="gap-1">
               <Package className="h-4 w-4" />
