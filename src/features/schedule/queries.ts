@@ -24,6 +24,48 @@ export function useMyNextShift(staffId: string | undefined) {
   });
 }
 
+export interface TodayAssignment {
+  opening: boolean;
+  closing: boolean;
+  isOff: boolean;
+  hasAnyShift: boolean;
+}
+
+/**
+ * Today's shift assignment for the signed-in user. Opening = start_time
+ * before 14:00 Amman, closing = 14:00 or later. Lets Home show only the
+ * relevant checklist instead of both.
+ */
+export function useTodayShiftAssignment(staffId: string | undefined) {
+  return useQuery({
+    queryKey: ['todayAssignment', staffId],
+    enabled: !!staffId,
+    queryFn: async (): Promise<TodayAssignment> => {
+      const today = todayAmman();
+      const { data, error } = await supabase
+        .from('shifts')
+        .select('start_time, is_off')
+        .eq('staff_id', staffId!)
+        .eq('shift_date', today);
+      if (error) throw error;
+
+      const rows = (data ?? []) as { start_time: string | null; is_off: boolean }[];
+      const working = rows.filter((r) => !r.is_off);
+
+      const opening = working.some((r) => r.start_time !== null && r.start_time < '14:00:00');
+      const closing = working.some((r) => r.start_time !== null && r.start_time >= '14:00:00');
+
+      return {
+        opening,
+        closing,
+        isOff: rows.length > 0 && working.length === 0,
+        hasAnyShift: working.length > 0,
+      };
+    },
+    staleTime: 60_000,
+  });
+}
+
 export function useStaff() {
   return useQuery({
     queryKey: ['staff'],

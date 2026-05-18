@@ -50,7 +50,9 @@
     "lowStockCount_other": "{{count}} items to reorder",
     "quickLog": "Log inventory change",
     "recipes": "Recipe book",
-    "recipesSubtitle": "Drink builds, ratios and grind"
+    "recipesSubtitle": "Drink builds, ratios and grind",
+    "offToday": "You're off today",
+    "offTodayHelp": "No shift scheduled. Enjoy the day — the next one is below."
   },
   "recipes": {
     "title": "Recipe book",

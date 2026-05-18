@@ -1,13 +1,14 @@
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { BookOpen, ChevronRight, Sun, Moon, AlertTriangle, Calendar as CalIcon, Plus } from 'lucide-react';
+import { BookOpen, ChevronRight, Coffee, Sun, Moon, AlertTriangle, Calendar as CalIcon, Plus } from 'lucide-react';
 import { useAuth } from '@/features/auth/AuthProvider';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useTodayRunSummary } from '@/features/checklist/queries';
 import { useLowStockCount } from '@/features/inventory/queries';
-import { useMyNextShift } from '@/features/schedule/queries';
+import { useMyNextShift, useTodayShiftAssignment } from '@/features/schedule/queries';
+import { isManager } from '@/lib/rls';
 import { formatDate, shortTime, todayAmman } from '@/lib/date';
 import { cn } from '@/lib/utils';
 
@@ -20,9 +21,18 @@ export function HomeRoute() {
   const closing = useTodayRunSummary('closing');
   const low = useLowStockCount();
   const next = useMyNextShift(profile?.id);
+  const assignment = useTodayShiftAssignment(profile?.id);
 
   const isAr = i18n.language.startsWith('ar');
   const todayLabel = formatDate(today, isAr ? 'EEEE d MMMM yyyy' : 'EEEE, d MMM yyyy');
+
+  const manager = isManager(profile);
+  const showOpening = manager || assignment.data?.opening === true;
+  const showClosing = manager || assignment.data?.closing === true;
+  const showOffTile =
+    !manager &&
+    assignment.data !== undefined &&
+    !assignment.data.hasAnyShift;
 
   return (
     <div className="space-y-4">
@@ -31,20 +41,35 @@ export function HomeRoute() {
         <h1 className="text-2xl font-bold tracking-tight">{todayLabel}</h1>
       </header>
 
-      <ShiftCard
-        shift="opening"
-        icon={<Sun className="h-5 w-5" />}
-        title={t('home.openingShift')}
-        loading={opening.isLoading}
-        summary={opening.data}
-      />
-      <ShiftCard
-        shift="closing"
-        icon={<Moon className="h-5 w-5" />}
-        title={t('home.closingShift')}
-        loading={closing.isLoading}
-        summary={closing.data}
-      />
+      {showOpening && (
+        <ShiftCard
+          shift="opening"
+          icon={<Sun className="h-5 w-5" />}
+          title={t('home.openingShift')}
+          loading={opening.isLoading}
+          summary={opening.data}
+        />
+      )}
+      {showClosing && (
+        <ShiftCard
+          shift="closing"
+          icon={<Moon className="h-5 w-5" />}
+          title={t('home.closingShift')}
+          loading={closing.isLoading}
+          summary={closing.data}
+        />
+      )}
+      {showOffTile && (
+        <Card>
+          <CardHeader className="flex-row items-center gap-2 space-y-0">
+            <Coffee className="h-5 w-5 text-muted-foreground" />
+            <CardTitle className="text-base">{t('home.offToday')}</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-sm text-muted-foreground">{t('home.offTodayHelp')}</p>
+          </CardContent>
+        </Card>
+      )}
 
       <Link to="/inventory?filter=low" className="block">
         <Card className={cn(low.data && low.data > 0 ? 'border-stock-out/50' : undefined)}>
