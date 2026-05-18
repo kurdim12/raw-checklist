@@ -65,7 +65,9 @@
     "grind": "Grind",
     "time": "Time",
     "steps": "Steps",
+    "build": "Build",
     "notes": "Notes",
+    "count": "drinks",
     "tabs": {
       "all": "All",
       "black": "Black",

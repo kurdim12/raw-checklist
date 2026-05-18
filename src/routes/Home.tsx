@@ -90,19 +90,26 @@ export function HomeRoute() {
         </CardContent>
       </Card>
 
-      <Link to="/recipes" className="block">
-        <Card>
-          <CardHeader className="flex-row items-center justify-between space-y-0">
+      <Link
+        to="/recipes"
+        className="group relative block overflow-hidden rounded-2xl border border-cream/15 bg-gradient-to-br from-olive-700 via-card to-olive-800 px-5 py-5 transition-all hover:border-cream/35 hover:shadow-lg active:scale-[0.995]"
+      >
+        <div className="absolute -end-6 -top-6 h-24 w-24 rounded-full bg-cream/[0.04] blur-2xl" />
+        <div className="relative flex items-center justify-between gap-4">
+          <div className="flex-1 space-y-1.5">
             <div className="flex items-center gap-2">
-              <BookOpen className="h-5 w-5 text-muted-foreground" />
-              <CardTitle className="text-base">{t('home.recipes')}</CardTitle>
+              <BookOpen className="h-3.5 w-3.5 text-cream/60" />
+              <p className="text-[10px] font-semibold uppercase tracking-[0.3em] text-cream/55">
+                Raw Smith · 2025
+              </p>
             </div>
-            <ChevronRight className="h-5 w-5 text-muted-foreground rtl:rotate-180" />
-          </CardHeader>
-          <CardContent>
-            <p className="text-sm text-muted-foreground">{t('home.recipesSubtitle')}</p>
-          </CardContent>
-        </Card>
+            <h3 className="text-xl font-semibold tracking-tight text-cream-50">
+              {t('home.recipes')}
+            </h3>
+            <p className="text-xs italic text-cream/60">{t('home.recipesSubtitle')}</p>
+          </div>
+          <ChevronRight className="h-5 w-5 shrink-0 text-cream/40 transition-colors group-hover:text-cream/80 rtl:rotate-180" />
+        </div>
       </Link>
 
       <Link to="/inventory/log" className="fixed bottom-20 right-4 z-20 rtl:right-auto rtl:left-4">
