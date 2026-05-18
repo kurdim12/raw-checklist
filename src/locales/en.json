@@ -180,6 +180,7 @@
       "staff": "Staff",
       "settings": "Settings",
       "announcements": "Notices",
+      "compliance": "Compliance",
       "audit": "Audit"
     },
     "announcements": {
@@ -207,6 +208,19 @@
       "before": "Before",
       "after": "After",
       "unknownActor": "system"
+    },
+    "compliance": {
+      "last7": "Last 7 days",
+      "last14": "Last 14 days",
+      "last30": "Last 30 days",
+      "overall": "Overall",
+      "opening": "Opening",
+      "closing": "Closing",
+      "byRun": "Per-shift breakdown",
+      "mostMissed": "Most missed items",
+      "noRuns": "No checklists run in this window.",
+      "open": "Not closed",
+      "notClosed": "Run still open"
     },
     "settings": {
       "openHours": "Open hours",

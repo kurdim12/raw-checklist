@@ -28,6 +28,12 @@ import {
 import { useInviteUser, useResetPassword } from '@/features/admin/users';
 import { useAuditLog, useAuditActions, type AuditRow } from '@/features/admin/audit';
 import {
+  useComplianceSummary,
+  pct as pctFn,
+  type ComplianceRun,
+  type ComplianceMissedItem,
+} from '@/features/admin/compliance';
+import {
   useAnnouncementsAll,
   useUpsertAnnouncement,
   useDeleteAnnouncement,
@@ -75,6 +81,9 @@ export function AdminRoute() {
           <TabsTrigger value="announce" className="flex-1">
             {t('admin.tabs.announcements')}
           </TabsTrigger>
+          <TabsTrigger value="compliance" className="flex-1">
+            {t('admin.tabs.compliance')}
+          </TabsTrigger>
           <TabsTrigger value="audit" className="flex-1">
             {t('admin.tabs.audit')}
           </TabsTrigger>
@@ -88,6 +97,9 @@ export function AdminRoute() {
         </TabsContent>
         <TabsContent value="announce">
           <AnnouncementsTab />
+        </TabsContent>
+        <TabsContent value="compliance">
+          <ComplianceTab />
         </TabsContent>
         <TabsContent value="audit">
           <AuditTab />
@@ -649,6 +661,168 @@ function AuditRowView({ row }: { row: AuditRow }) {
           )}
         </div>
       )}
+    </div>
+  );
+}
+
+function ComplianceTab() {
+  const { t, i18n } = useTranslation();
+  const isAr = i18n.language.startsWith('ar');
+  const [days, setDays] = useState<string>('7');
+  const summary = useComplianceSummary(Number(days));
+
+  if (summary.isLoading) {
+    return <Skeleton className="h-96 w-full" />;
+  }
+  if (!summary.data) return null;
+
+  const { overall, opening, closing, runs, missed } = summary.data;
+
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center justify-between gap-2">
+        <Select value={days} onValueChange={setDays}>
+          <SelectTrigger className="w-40">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="7">{t('admin.compliance.last7')}</SelectItem>
+            <SelectItem value="14">{t('admin.compliance.last14')}</SelectItem>
+            <SelectItem value="30">{t('admin.compliance.last30')}</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+
+      <div className="grid grid-cols-3 gap-2">
+        <ComplianceStat label={t('admin.compliance.overall')} done={overall.done} total={overall.total} />
+        <ComplianceStat label={t('admin.compliance.opening')} done={opening.done} total={opening.total} />
+        <ComplianceStat label={t('admin.compliance.closing')} done={closing.done} total={closing.total} />
+      </div>
+
+      <section className="space-y-2">
+        <h2 className="px-1 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
+          {t('admin.compliance.byRun')}
+        </h2>
+        {runs.length === 0 ? (
+          <Card>
+            <CardContent className="py-8 text-center text-sm text-muted-foreground">
+              {t('admin.compliance.noRuns')}
+            </CardContent>
+          </Card>
+        ) : (
+          <Card>
+            <CardContent className="divide-y divide-border p-0">
+              {runs.map((r) => (
+                <RunRow key={r.run_id} run={r} />
+              ))}
+            </CardContent>
+          </Card>
+        )}
+      </section>
+
+      {missed.length > 0 && (
+        <section className="space-y-2">
+          <h2 className="px-1 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
+            {t('admin.compliance.mostMissed')}
+          </h2>
+          <Card>
+            <CardContent className="divide-y divide-border p-0">
+              {missed.map((m) => (
+                <MissedRow key={m.template_id} item={m} isAr={isAr} />
+              ))}
+            </CardContent>
+          </Card>
+        </section>
+      )}
+    </div>
+  );
+}
+
+function ComplianceStat({ label, done, total }: { label: string; done: number; total: number }) {
+  const p = pctFn(done, total);
+  return (
+    <Card>
+      <CardContent className="py-3 text-center">
+        <div className="text-[10px] uppercase tracking-wider text-muted-foreground">{label}</div>
+        <div
+          className={cn(
+            'mt-1 text-2xl font-bold tabular-nums',
+            p >= 90 && 'text-emerald-600 dark:text-emerald-400',
+            p < 70 && total > 0 && 'text-destructive',
+          )}
+        >
+          {total === 0 ? '—' : `${p}%`}
+        </div>
+        <div className="mt-0.5 text-[11px] text-muted-foreground tabular-nums">
+          {done} / {total}
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
+function RunRow({ run }: { run: ComplianceRun }) {
+  const { t, i18n } = useTranslation();
+  const p = pctFn(run.done, run.total);
+  const when = new Date(run.shift_date + 'T00:00:00').toLocaleDateString(i18n.language, {
+    weekday: 'short',
+    month: 'short',
+    day: 'numeric',
+  });
+  return (
+    <div className="flex items-center gap-3 p-3 text-sm">
+      <div className="min-w-0 flex-1">
+        <div className="flex flex-wrap items-baseline gap-2">
+          <span className="font-medium">{when}</span>
+          <Badge variant="outline" className="text-[10px]">
+            {t(`checklist.shift.${run.shift}`)}
+          </Badge>
+          {run.closed_at == null && (
+            <Badge variant="outline" className="text-[10px] text-muted-foreground">
+              {t('admin.compliance.open')}
+            </Badge>
+          )}
+        </div>
+        <div className="mt-0.5 text-xs text-muted-foreground">
+          {run.closed_by_name ?? t('admin.compliance.notClosed')}
+        </div>
+      </div>
+      <div className="shrink-0 text-end">
+        <div
+          className={cn(
+            'font-mono text-base font-semibold tabular-nums',
+            p >= 90 && 'text-emerald-600 dark:text-emerald-400',
+            p < 70 && run.total > 0 && 'text-destructive',
+          )}
+        >
+          {run.total === 0 ? '—' : `${p}%`}
+        </div>
+        <div className="text-[11px] text-muted-foreground tabular-nums">
+          {run.done} / {run.total}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function MissedRow({ item, isAr }: { item: ComplianceMissedItem; isAr: boolean }) {
+  const { t } = useTranslation();
+  return (
+    <div className="flex items-center gap-3 p-3 text-sm">
+      <div className="min-w-0 flex-1">
+        <div className="truncate font-medium">{isAr ? item.title_ar : item.title}</div>
+        <div className="mt-0.5 text-xs text-muted-foreground">
+          {t(`checklist.shift.${item.shift}`)} · {item.missed} / {item.occurrences}
+        </div>
+      </div>
+      <div
+        className={cn(
+          'shrink-0 font-mono text-base font-semibold tabular-nums',
+          item.miss_rate >= 50 ? 'text-destructive' : 'text-muted-foreground',
+        )}
+      >
+        {item.miss_rate}%
+      </div>
     </div>
   );
 }

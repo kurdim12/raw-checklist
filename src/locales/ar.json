@@ -180,6 +180,7 @@
       "staff": "الموظفين",
       "settings": "الإعدادات",
       "announcements": "تنبيهات",
+      "compliance": "الالتزام",
       "audit": "السجل"
     },
     "announcements": {
@@ -207,6 +208,19 @@
       "before": "قبل",
       "after": "بعد",
       "unknownActor": "النظام"
+    },
+    "compliance": {
+      "last7": "آخر 7 أيام",
+      "last14": "آخر 14 يوم",
+      "last30": "آخر 30 يوم",
+      "overall": "الإجمالي",
+      "opening": "الافتتاح",
+      "closing": "الإغلاق",
+      "byRun": "حسب الوردية",
+      "mostMissed": "الأكثر فوتاناً",
+      "noRuns": "ما في أي تشيك لست بهالفترة.",
+      "open": "ما انسكر",
+      "notClosed": "الوردية لسا مفتوحة"
     },
     "settings": {
       "openHours": "ساعات الدوام",
