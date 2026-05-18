@@ -143,6 +143,27 @@ export interface LowStockAlert {
   created_at: string;
 }
 
+export type RecipeCategory = 'black' | 'white';
+
+export interface Recipe {
+  id: string;
+  code: string;
+  category: RecipeCategory;
+  is_iced: boolean;
+  name: string;
+  name_ar: string | null;
+  glassware: string | null;
+  ratio: string | null;
+  grind: string | null;
+  time_target: string | null;
+  steps: string[];
+  notes: string | null;
+  order_index: number;
+  active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
 type TableShape<TRow, TInsert = Partial<TRow>, TUpdate = Partial<TRow>> = {
   Row: TRow;
   Insert: TInsert;
@@ -164,6 +185,7 @@ export interface Database {
       stock_orders: TableShape<StockOrder>;
       stock_order_items: TableShape<StockOrderItem>;
       low_stock_alerts: TableShape<LowStockAlert>;
+      recipes: TableShape<Recipe>;
     };
     Views: Record<string, never>;
     Functions: {

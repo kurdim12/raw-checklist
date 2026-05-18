@@ -12,6 +12,8 @@ import { OrdersRoute } from './routes/Orders';
 import { ScheduleRoute } from './routes/Schedule';
 import { AdminRoute } from './routes/Admin';
 import { ProfileRoute } from './routes/Profile';
+import { RecipesRoute } from './routes/Recipes';
+import { RecipeDetailRoute } from './routes/RecipeDetail';
 
 export default function App() {
   return (
@@ -41,6 +43,8 @@ export default function App() {
         <Route path="schedule" element={<ScheduleRoute />} />
         <Route path="admin" element={<AdminRoute />} />
         <Route path="profile" element={<ProfileRoute />} />
+        <Route path="recipes" element={<RecipesRoute />} />
+        <Route path="recipes/:code" element={<RecipeDetailRoute />} />
       </Route>
     </Routes>
   );

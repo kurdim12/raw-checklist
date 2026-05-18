@@ -48,7 +48,29 @@
     "lowStock": "ناقص بالمخزون",
     "lowStockCount_one": "غرض واحد لازم تطلبه",
     "lowStockCount_other": "{{count}} أغراض لازم تطلبهم",
-    "quickLog": "سجّل تغيير بالمخزون"
+    "quickLog": "سجّل تغيير بالمخزون",
+    "recipes": "كتاب الوصفات",
+    "recipesSubtitle": "طريقة كل مشروب، نسبه وطحنته"
+  },
+  "recipes": {
+    "title": "كتاب الوصفات",
+    "subtitle": "راو سميث 2025 — كل مشروب بدقّة.",
+    "searchPlaceholder": "ابحث عن مشروب",
+    "iced": "بارد",
+    "empty": "ما في وصفات مطابقة",
+    "notFound": "الوصفة مش موجودة",
+    "specs": "المواصفات",
+    "glassware": "الكأس",
+    "ratio": "النسبة",
+    "grind": "الطحنة",
+    "time": "الوقت",
+    "steps": "الخطوات",
+    "notes": "ملاحظات",
+    "tabs": {
+      "all": "الكل",
+      "black": "أسود",
+      "white": "أبيض"
+    }
   },
   "checklist": {
     "section": {

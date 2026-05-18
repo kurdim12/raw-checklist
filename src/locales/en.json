@@ -48,7 +48,29 @@
     "lowStock": "Low stock",
     "lowStockCount_one": "{{count}} item to reorder",
     "lowStockCount_other": "{{count}} items to reorder",
-    "quickLog": "Log inventory change"
+    "quickLog": "Log inventory change",
+    "recipes": "Recipe book",
+    "recipesSubtitle": "Drink builds, ratios and grind"
+  },
+  "recipes": {
+    "title": "Recipe book",
+    "subtitle": "Raw Smith 2025 — every drink, dialled.",
+    "searchPlaceholder": "Search a drink",
+    "iced": "Iced",
+    "empty": "No matching recipes",
+    "notFound": "Recipe not found",
+    "specs": "Specs",
+    "glassware": "Glassware",
+    "ratio": "Ratio",
+    "grind": "Grind",
+    "time": "Time",
+    "steps": "Steps",
+    "notes": "Notes",
+    "tabs": {
+      "all": "All",
+      "black": "Black",
+      "white": "White"
+    }
   },
   "checklist": {
     "section": {

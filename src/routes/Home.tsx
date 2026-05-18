@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { ChevronRight, Sun, Moon, AlertTriangle, Calendar as CalIcon, Plus } from 'lucide-react';
+import { BookOpen, ChevronRight, Sun, Moon, AlertTriangle, Calendar as CalIcon, Plus } from 'lucide-react';
 import { useAuth } from '@/features/auth/AuthProvider';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -89,6 +89,21 @@ export function HomeRoute() {
           )}
         </CardContent>
       </Card>
+
+      <Link to="/recipes" className="block">
+        <Card>
+          <CardHeader className="flex-row items-center justify-between space-y-0">
+            <div className="flex items-center gap-2">
+              <BookOpen className="h-5 w-5 text-muted-foreground" />
+              <CardTitle className="text-base">{t('home.recipes')}</CardTitle>
+            </div>
+            <ChevronRight className="h-5 w-5 text-muted-foreground rtl:rotate-180" />
+          </CardHeader>
+          <CardContent>
+            <p className="text-sm text-muted-foreground">{t('home.recipesSubtitle')}</p>
+          </CardContent>
+        </Card>
+      </Link>
 
       <Link to="/inventory/log" className="fixed bottom-20 right-4 z-20 rtl:right-auto rtl:left-4">
         <Button size="lg" className="rounded-full shadow-lg gap-2">
