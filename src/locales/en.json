@@ -52,7 +52,8 @@
     "recipes": "Recipe book",
     "recipesSubtitle": "Drink builds, ratios and grind",
     "offToday": "You're off today",
-    "offTodayHelp": "No shift scheduled. Enjoy the day — the next one is below."
+    "offTodayHelp": "No shift scheduled. Enjoy the day — the next one is below.",
+    "gotIt": "Got it"
   },
   "recipes": {
     "title": "Recipe book",
@@ -176,7 +177,24 @@
       "categories": "Categories",
       "staff": "Staff",
       "settings": "Settings",
+      "announcements": "Notices",
       "audit": "Audit"
+    },
+    "announcements": {
+      "new": "New notice",
+      "empty": "No notices yet",
+      "draft": "Draft",
+      "expired": "Expired",
+      "saved": "Notice saved",
+      "deleted": "Notice deleted",
+      "confirmDelete": "Delete this notice?",
+      "titleField": "Title",
+      "bodyEn": "Body (English)",
+      "bodyAr": "Body (Arabic)",
+      "pinned": "Pinned",
+      "published": "Published",
+      "expiresAt": "Expires at",
+      "expiresHelp": "Leave blank to keep it active forever."
     },
     "managerOnly": "Manager access only",
     "audit": {

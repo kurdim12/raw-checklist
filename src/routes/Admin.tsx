@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { KeyRound, LogOut, UserPlus, X, ChevronDown, ChevronRight } from 'lucide-react';
+import { KeyRound, LogOut, UserPlus, X, ChevronDown, ChevronRight, Megaphone, Pin, Trash2 } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -27,6 +27,13 @@ import {
 } from '@/features/admin/queries';
 import { useInviteUser, useResetPassword } from '@/features/admin/users';
 import { useAuditLog, useAuditActions, type AuditRow } from '@/features/admin/audit';
+import {
+  useAnnouncementsAll,
+  useUpsertAnnouncement,
+  useDeleteAnnouncement,
+  type AnnouncementRow,
+} from '@/features/admin/announcements';
+import { Textarea } from '@/components/ui/textarea';
 import { cn } from '@/lib/utils';
 import type { Profile } from '@/types/database';
 
@@ -65,6 +72,9 @@ export function AdminRoute() {
           <TabsTrigger value="settings" className="flex-1">
             {t('admin.tabs.settings')}
           </TabsTrigger>
+          <TabsTrigger value="announce" className="flex-1">
+            {t('admin.tabs.announcements')}
+          </TabsTrigger>
           <TabsTrigger value="audit" className="flex-1">
             {t('admin.tabs.audit')}
           </TabsTrigger>
@@ -75,6 +85,9 @@ export function AdminRoute() {
         </TabsContent>
         <TabsContent value="settings">
           <SettingsTab />
+        </TabsContent>
+        <TabsContent value="announce">
+          <AnnouncementsTab />
         </TabsContent>
         <TabsContent value="audit">
           <AuditTab />
@@ -637,5 +650,223 @@ function AuditRowView({ row }: { row: AuditRow }) {
         </div>
       )}
     </div>
+  );
+}
+
+function AnnouncementsTab() {
+  const { t } = useTranslation();
+  const { toast } = useToast();
+  const list = useAnnouncementsAll();
+  const upsert = useUpsertAnnouncement();
+  const del = useDeleteAnnouncement();
+
+  const [editing, setEditing] = useState<AnnouncementRow | 'new' | null>(null);
+
+  async function handleSave(draft: AnnouncementDraft) {
+    try {
+      await upsert.mutateAsync({
+        id: editing === 'new' || !editing ? undefined : editing.id,
+        title: draft.title.trim(),
+        body: draft.body.trim(),
+        body_ar: draft.bodyAr.trim() || null,
+        pinned: draft.pinned,
+        published: draft.published,
+        expires_at: draft.expiresAt ? new Date(draft.expiresAt).toISOString() : null,
+      });
+      toast({ title: t('admin.announcements.saved') });
+      setEditing(null);
+    } catch (e) {
+      toast({ variant: 'destructive', title: t('common.error'), description: (e as Error).message });
+    }
+  }
+
+  async function handleDelete(id: string) {
+    if (!confirm(t('admin.announcements.confirmDelete'))) return;
+    try {
+      await del.mutateAsync(id);
+      toast({ title: t('admin.announcements.deleted') });
+    } catch (e) {
+      toast({ variant: 'destructive', title: t('common.error'), description: (e as Error).message });
+    }
+  }
+
+  if (editing) {
+    return (
+      <AnnouncementEditor
+        initial={editing === 'new' ? null : editing}
+        onCancel={() => setEditing(null)}
+        onSave={handleSave}
+        saving={upsert.isPending}
+      />
+    );
+  }
+
+  return (
+    <div className="space-y-3">
+      <div className="flex justify-end">
+        <Button size="sm" onClick={() => setEditing('new')} className="gap-1.5">
+          <Megaphone className="h-4 w-4" />
+          {t('admin.announcements.new')}
+        </Button>
+      </div>
+
+      {list.isLoading ? (
+        <Skeleton className="h-32 w-full" />
+      ) : (list.data ?? []).length === 0 ? (
+        <Card>
+          <CardContent className="py-8 text-center text-sm text-muted-foreground">
+            {t('admin.announcements.empty')}
+          </CardContent>
+        </Card>
+      ) : (
+        <Card>
+          <CardContent className="divide-y divide-border p-0">
+            {(list.data ?? []).map((a) => (
+              <div key={a.id} className="p-3">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0 flex-1">
+                    <div className="flex flex-wrap items-center gap-1.5">
+                      <span className="font-medium">{a.title}</span>
+                      {a.pinned && <Pin className="h-3 w-3 text-accent" />}
+                      {!a.published && (
+                        <Badge variant="outline" className="text-[10px]">
+                          {t('admin.announcements.draft')}
+                        </Badge>
+                      )}
+                      {a.expires_at && new Date(a.expires_at).getTime() < Date.now() && (
+                        <Badge variant="outline" className="text-[10px]">
+                          {t('admin.announcements.expired')}
+                        </Badge>
+                      )}
+                    </div>
+                    <p className="mt-1 line-clamp-2 text-sm text-muted-foreground">{a.body}</p>
+                  </div>
+                  <div className="flex shrink-0 items-center gap-1">
+                    <Button size="sm" variant="ghost" onClick={() => setEditing(a)}>
+                      {t('common.edit')}
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      onClick={() => handleDelete(a.id)}
+                      aria-label={t('common.delete')}
+                    >
+                      <Trash2 className="h-4 w-4 text-destructive" />
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </CardContent>
+        </Card>
+      )}
+    </div>
+  );
+}
+
+interface AnnouncementDraft {
+  title: string;
+  body: string;
+  bodyAr: string;
+  pinned: boolean;
+  published: boolean;
+  expiresAt: string;
+}
+
+function AnnouncementEditor({
+  initial,
+  onCancel,
+  onSave,
+  saving,
+}: {
+  initial: AnnouncementRow | null;
+  onCancel: () => void;
+  onSave: (d: AnnouncementDraft) => void;
+  saving: boolean;
+}) {
+  const { t } = useTranslation();
+  const [draft, setDraft] = useState<AnnouncementDraft>({
+    title: initial?.title ?? '',
+    body: initial?.body ?? '',
+    bodyAr: initial?.body_ar ?? '',
+    pinned: initial?.pinned ?? true,
+    published: initial?.published ?? true,
+    expiresAt: initial?.expires_at ? initial.expires_at.slice(0, 16) : '',
+  });
+
+  const canSave = draft.title.trim().length > 0 && draft.body.trim().length > 0;
+
+  return (
+    <Card>
+      <CardContent className="space-y-4 pt-6">
+        <div className="space-y-1">
+          <Label htmlFor="ann-title">{t('admin.announcements.titleField')}</Label>
+          <Input
+            id="ann-title"
+            value={draft.title}
+            onChange={(e) => setDraft({ ...draft, title: e.target.value })}
+          />
+        </div>
+        <div className="space-y-1">
+          <Label htmlFor="ann-body">{t('admin.announcements.bodyEn')}</Label>
+          <Textarea
+            id="ann-body"
+            rows={3}
+            value={draft.body}
+            onChange={(e) => setDraft({ ...draft, body: e.target.value })}
+          />
+        </div>
+        <div className="space-y-1">
+          <Label htmlFor="ann-body-ar">{t('admin.announcements.bodyAr')}</Label>
+          <Textarea
+            id="ann-body-ar"
+            rows={3}
+            dir="rtl"
+            value={draft.bodyAr}
+            onChange={(e) => setDraft({ ...draft, bodyAr: e.target.value })}
+          />
+        </div>
+        <div className="grid grid-cols-2 gap-3">
+          <div className="flex items-center justify-between gap-2 rounded-md border border-border p-3">
+            <Label className="cursor-pointer">{t('admin.announcements.pinned')}</Label>
+            <Switch
+              checked={draft.pinned}
+              onCheckedChange={(v) => setDraft({ ...draft, pinned: v })}
+            />
+          </div>
+          <div className="flex items-center justify-between gap-2 rounded-md border border-border p-3">
+            <Label className="cursor-pointer">{t('admin.announcements.published')}</Label>
+            <Switch
+              checked={draft.published}
+              onCheckedChange={(v) => setDraft({ ...draft, published: v })}
+            />
+          </div>
+        </div>
+        <div className="space-y-1">
+          <Label htmlFor="ann-expires">{t('admin.announcements.expiresAt')}</Label>
+          <Input
+            id="ann-expires"
+            type="datetime-local"
+            value={draft.expiresAt}
+            onChange={(e) => setDraft({ ...draft, expiresAt: e.target.value })}
+          />
+          <p className="text-xs text-muted-foreground">
+            {t('admin.announcements.expiresHelp')}
+          </p>
+        </div>
+        <div className="flex gap-2">
+          <Button variant="outline" className="flex-1" onClick={onCancel}>
+            {t('common.cancel')}
+          </Button>
+          <Button
+            className="flex-1"
+            disabled={!canSave || saving}
+            onClick={() => onSave(draft)}
+          >
+            {t('common.save')}
+          </Button>
+        </div>
+      </CardContent>
+    </Card>
   );
 }

@@ -1,13 +1,18 @@
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { BookOpen, ChevronRight, Coffee, Sun, Moon, AlertTriangle, Calendar as CalIcon, Plus } from 'lucide-react';
+import { BookOpen, ChevronRight, Coffee, Sun, Moon, AlertTriangle, Calendar as CalIcon, Plus, Megaphone, Check } from 'lucide-react';
 import { useAuth } from '@/features/auth/AuthProvider';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useToast } from '@/components/ui/use-toast';
 import { useTodayRunSummary } from '@/features/checklist/queries';
 import { useLowStockCount } from '@/features/inventory/queries';
 import { useMyNextShift, useTodayShiftAssignment } from '@/features/schedule/queries';
+import {
+  useTopUnreadAnnouncement,
+  useMarkAnnouncementRead,
+} from '@/features/admin/announcements';
 import { isManager } from '@/lib/rls';
 import { formatDate, shortTime, todayAmman } from '@/lib/date';
 import { cn } from '@/lib/utils';
@@ -22,11 +27,23 @@ export function HomeRoute() {
   const low = useLowStockCount();
   const next = useMyNextShift(profile?.id);
   const assignment = useTodayShiftAssignment(profile?.id);
+  const banner = useTopUnreadAnnouncement(profile?.id);
+  const markRead = useMarkAnnouncementRead();
+  const { toast } = useToast();
 
   const isAr = i18n.language.startsWith('ar');
   const todayLabel = formatDate(today, isAr ? 'EEEE d MMMM yyyy' : 'EEEE, d MMM yyyy');
 
   const manager = isManager(profile);
+
+  async function dismissBanner() {
+    if (!banner.data) return;
+    try {
+      await markRead.mutateAsync(banner.data.id);
+    } catch (e) {
+      toast({ variant: 'destructive', title: t('common.error'), description: (e as Error).message });
+    }
+  }
   const showOpening = manager || assignment.data?.opening === true;
   const showClosing = manager || assignment.data?.closing === true;
   const showOffTile =
@@ -40,6 +57,30 @@ export function HomeRoute() {
         <p className="text-xs uppercase tracking-wider text-muted-foreground">{t('home.todayIs')}</p>
         <h1 className="text-2xl font-bold tracking-tight">{todayLabel}</h1>
       </header>
+
+      {banner.data && (
+        <Card className="border-accent/40 bg-accent/5">
+          <CardHeader className="flex-row items-start gap-2 space-y-0 pb-2">
+            <Megaphone className="mt-0.5 h-5 w-5 text-accent" />
+            <CardTitle className="text-base leading-tight">{banner.data.title}</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <p className="text-sm whitespace-pre-line" dir={isAr && banner.data.body_ar ? 'rtl' : undefined}>
+              {isAr && banner.data.body_ar ? banner.data.body_ar : banner.data.body}
+            </p>
+            <Button
+              size="sm"
+              variant="outline"
+              className="gap-1.5"
+              onClick={dismissBanner}
+              disabled={markRead.isPending}
+            >
+              <Check className="h-4 w-4" />
+              {t('home.gotIt')}
+            </Button>
+          </CardContent>
+        </Card>
+      )}
 
       {showOpening && (
         <ShiftCard
