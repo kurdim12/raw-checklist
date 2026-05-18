@@ -73,12 +73,10 @@ export function useUpdateOrderStatus() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async (args: { orderId: string; status: 'sent' | 'cancelled' }) => {
-      const patch: Record<string, unknown> = { status: args.status };
-      if (args.status === 'sent') patch.sent_at = new Date().toISOString();
-      const { error } = await supabase
-        .from('stock_orders')
-        .update(patch)
-        .eq('id', args.orderId);
+      const { error } = await supabase.rpc('update_order_status', {
+        p_order_id: args.orderId,
+        p_status: args.status,
+      });
       if (error) throw error;
     },
     onSuccess: () => {
