@@ -84,3 +84,49 @@ export function useUpdateOrderStatus() {
     },
   });
 }
+
+export function useAddOrderLine() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (args: { orderId: string; itemId: string; quantity: number }) => {
+      const { error } = await supabase.rpc('add_order_line', {
+        p_order_id: args.orderId,
+        p_item_id: args.itemId,
+        p_quantity: args.quantity,
+      });
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['stockOrders'] });
+    },
+  });
+}
+
+export function useUpdateOrderLine() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (args: { lineId: string; quantity: number }) => {
+      const { error } = await supabase.rpc('update_order_line', {
+        p_line_id: args.lineId,
+        p_quantity: args.quantity,
+      });
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['stockOrders'] });
+    },
+  });
+}
+
+export function useDeleteOrderLine() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (lineId: string) => {
+      const { error } = await supabase.rpc('delete_order_line', { p_line_id: lineId });
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['stockOrders'] });
+    },
+  });
+}

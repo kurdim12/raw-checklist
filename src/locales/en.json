@@ -154,7 +154,13 @@
     "noLowStock": "Nothing is low — no order needed.",
     "empty": "No orders yet",
     "partialHint": "Adjust the received quantity if the supplier delivered less than ordered.",
-    "receivedQty": "Received quantity"
+    "receivedQty": "Received quantity",
+    "draftHint": "Edit quantities, remove lines, or add items below. Changes save instantly.",
+    "orderedQty": "Ordered quantity",
+    "removeLine": "Remove line",
+    "removeLineConfirm": "Remove this item from the order?",
+    "addItemPlaceholder": "Choose item…",
+    "qty": "Qty"
   },
   "schedule": {
     "title": "Schedule",
@@ -262,6 +268,7 @@
     "cancel": "Cancel",
     "delete": "Delete",
     "edit": "Edit",
+    "add": "Add",
     "yes": "Yes",
     "no": "No",
     "loading": "Loading…",
