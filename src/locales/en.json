@@ -268,5 +268,26 @@
     "noChanges": "No changes",
     "saveCta": "Save count ({{count}})",
     "saved": "Counted {{count}} items"
+  },
+  "items": {
+    "title": "Manage items",
+    "new": "New item",
+    "edit": "Edit item",
+    "saved": "Item saved",
+    "nameEn": "Name (English)",
+    "nameAr": "Name (Arabic)",
+    "category": "Category",
+    "unit": "Unit",
+    "min": "Min level",
+    "par": "Par level",
+    "minPar": "min {{min}} / par {{par}}",
+    "costPerUnit": "Cost per unit",
+    "costOptional": "Optional",
+    "supplier": "Supplier",
+    "notes": "Notes",
+    "activeLabel": "Active (shown to baristas)",
+    "inactive": "Inactive",
+    "deactivate": "Deactivate",
+    "activate": "Activate"
   }
 }

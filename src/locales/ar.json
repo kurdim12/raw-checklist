@@ -268,5 +268,26 @@
     "noChanges": "ما في تغييرات",
     "saveCta": "احفظ الجرد ({{count}})",
     "saved": "تم جرد {{count}} صنف"
+  },
+  "items": {
+    "title": "إدارة الأصناف",
+    "new": "صنف جديد",
+    "edit": "تعديل الصنف",
+    "saved": "تم حفظ الصنف",
+    "nameEn": "الاسم (إنجليزي)",
+    "nameAr": "الاسم (عربي)",
+    "category": "الفئة",
+    "unit": "الوحدة",
+    "min": "حد التنبيه",
+    "par": "الحد المطلوب",
+    "minPar": "تنبيه {{min}} / مطلوب {{par}}",
+    "costPerUnit": "السعر للوحدة",
+    "costOptional": "اختياري",
+    "supplier": "المورّد",
+    "notes": "ملاحظات",
+    "activeLabel": "ظاهر للباريستا",
+    "inactive": "متوقف",
+    "deactivate": "إيقاف",
+    "activate": "تفعيل"
   }
 }

@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Search, Plus, AlertTriangle, ChevronRight, Package, ClipboardCheck } from 'lucide-react';
+import { Search, Plus, AlertTriangle, ChevronRight, Package, ClipboardCheck, Settings2 } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
@@ -64,12 +64,20 @@ export function InventoryRoute() {
         <h1 className="text-2xl font-bold tracking-tight">{t('inventory.title')}</h1>
         <div className="flex flex-wrap items-center gap-2">
           {manager && (
-            <Link to="/inventory/count">
-              <Button size="sm" variant="outline" className="gap-1">
-                <ClipboardCheck className="h-4 w-4" />
-                {t('stockCount.title')}
-              </Button>
-            </Link>
+            <>
+              <Link to="/inventory/items">
+                <Button size="sm" variant="outline" className="gap-1">
+                  <Settings2 className="h-4 w-4" />
+                  {t('items.title')}
+                </Button>
+              </Link>
+              <Link to="/inventory/count">
+                <Button size="sm" variant="outline" className="gap-1">
+                  <ClipboardCheck className="h-4 w-4" />
+                  {t('stockCount.title')}
+                </Button>
+              </Link>
+            </>
           )}
           <Link to="/orders">
             <Button size="sm" variant="outline" className="gap-1">

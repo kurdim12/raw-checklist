@@ -85,6 +85,9 @@ export interface InventoryItem {
   supplier: string | null;
   notes: string | null;
   active: boolean;
+  cost_per_unit: number | null;
+  last_counted_at: string | null;
+  last_counted_by: string | null;
   created_at: string;
   updated_at: string;
 }
