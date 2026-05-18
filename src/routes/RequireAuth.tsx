@@ -4,7 +4,7 @@ import { useAuth } from '@/features/auth/AuthProvider';
 import { Skeleton } from '@/components/ui/skeleton';
 
 export function RequireAuth({ children }: { children: ReactNode }) {
-  const { session, profile, loading } = useAuth();
+  const { session, loading } = useAuth();
   const location = useLocation();
 
   if (loading) {
@@ -19,13 +19,6 @@ export function RequireAuth({ children }: { children: ReactNode }) {
 
   if (!session) {
     return <Navigate to="/login" state={{ from: location }} replace />;
-  }
-
-  if (
-    profile?.must_change_password &&
-    location.pathname !== '/change-password'
-  ) {
-    return <Navigate to="/change-password" replace />;
   }
 
   return <>{children}</>;
