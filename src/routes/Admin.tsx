@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { KeyRound, LogOut, UserPlus, X } from 'lucide-react';
+import { KeyRound, LogOut, UserPlus, X, ChevronDown, ChevronRight } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -26,6 +26,8 @@ import {
   useUpdateSetting,
 } from '@/features/admin/queries';
 import { useInviteUser, useResetPassword } from '@/features/admin/users';
+import { useAuditLog, useAuditActions, type AuditRow } from '@/features/admin/audit';
+import { cn } from '@/lib/utils';
 import type { Profile } from '@/types/database';
 
 export function AdminRoute() {
@@ -63,6 +65,9 @@ export function AdminRoute() {
           <TabsTrigger value="settings" className="flex-1">
             {t('admin.tabs.settings')}
           </TabsTrigger>
+          <TabsTrigger value="audit" className="flex-1">
+            {t('admin.tabs.audit')}
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="staff">
@@ -70,6 +75,9 @@ export function AdminRoute() {
         </TabsContent>
         <TabsContent value="settings">
           <SettingsTab />
+        </TabsContent>
+        <TabsContent value="audit">
+          <AuditTab />
         </TabsContent>
       </Tabs>
     </div>
@@ -289,23 +297,54 @@ function SettingsTab() {
   const update = useUpdateSetting();
   const { toast } = useToast();
 
-  type State = { hoursOpen: string; hoursClose: string; debounce: string; webhook: string };
+  type State = {
+    hoursOpen: string;
+    hoursClose: string;
+    debounce: string;
+    webhook: string;
+    waEnabled: boolean;
+    waRecipients: string[];
+    noteOnUncheck: boolean;
+    baristaInvEdit: boolean;
+  };
   const [draft, setDraft] = useState<State | null>(null);
+  const [newPhone, setNewPhone] = useState('');
 
   useEffect(() => {
     if (!settings.data) return;
     const get = (k: string) => settings.data.find((s) => s.key === k)?.value;
     const hours = (get('cafe_open_hours') as { open?: string; close?: string } | undefined) ?? {};
+    const recipients = get('whatsapp_alert_recipients');
     setDraft({
       hoursOpen: hours.open ?? '06:00',
       hoursClose: hours.close ?? '22:00',
       debounce: String(get('low_stock_debounce_hours') ?? 12),
       webhook: String(get('whatsapp_webhook_url') ?? ''),
+      waEnabled: get('whatsapp_alert_enabled') !== false,
+      waRecipients: Array.isArray(recipients) ? (recipients as string[]) : [],
+      noteOnUncheck: get('require_note_on_uncheck') !== false,
+      baristaInvEdit: get('allow_barista_inventory_edit') === true,
     });
   }, [settings.data]);
 
   if (settings.isLoading || !draft) {
     return <Skeleton className="h-64 w-full" />;
+  }
+
+  function addRecipient() {
+    const v = newPhone.trim();
+    if (!v || !draft) return;
+    if (draft.waRecipients.includes(v)) return;
+    setDraft({ ...draft, waRecipients: [...draft.waRecipients, v] });
+    setNewPhone('');
+  }
+
+  function removeRecipient(idx: number) {
+    if (!draft) return;
+    setDraft({
+      ...draft,
+      waRecipients: draft.waRecipients.filter((_, i) => i !== idx),
+    });
   }
 
   async function save() {
@@ -320,12 +359,19 @@ function SettingsTab() {
           key: 'low_stock_debounce_hours',
           value: Number(draft.debounce) || 12,
         }),
+        update.mutateAsync({ key: 'whatsapp_webhook_url', value: draft.webhook }),
+        update.mutateAsync({ key: 'whatsapp_alert_enabled', value: draft.waEnabled }),
         update.mutateAsync({
-          key: 'whatsapp_webhook_url',
-          value: draft.webhook,
+          key: 'whatsapp_alert_recipients',
+          value: draft.waRecipients,
+        }),
+        update.mutateAsync({ key: 'require_note_on_uncheck', value: draft.noteOnUncheck }),
+        update.mutateAsync({
+          key: 'allow_barista_inventory_edit',
+          value: draft.baristaInvEdit,
         }),
       ]);
-      toast({ title: t('inventory.log.saved') });
+      toast({ title: t('admin.settings.saved') });
     } catch (e) {
       toast({ variant: 'destructive', title: t('common.error'), description: (e as Error).message });
     }
@@ -333,7 +379,7 @@ function SettingsTab() {
 
   return (
     <Card>
-      <CardContent className="space-y-4 pt-6">
+      <CardContent className="space-y-5 pt-6">
         <div className="space-y-2">
           <Label>{t('admin.settings.openHours')}</Label>
           <div className="flex items-center gap-2">
@@ -362,14 +408,94 @@ function SettingsTab() {
           />
         </div>
 
-        <div className="space-y-2">
-          <Label htmlFor="webhook">{t('admin.settings.whatsappWebhook')}</Label>
-          <Input
-            id="webhook"
-            type="url"
-            placeholder="https://"
-            value={draft.webhook}
-            onChange={(e) => setDraft({ ...draft, webhook: e.target.value })}
+        <div className="space-y-2 rounded-md border border-border bg-secondary/30 p-3">
+          <div className="flex items-center justify-between gap-2">
+            <Label htmlFor="wa-enabled" className="cursor-pointer">
+              {t('admin.settings.whatsappEnabled')}
+            </Label>
+            <Switch
+              id="wa-enabled"
+              checked={draft.waEnabled}
+              onCheckedChange={(v) => setDraft({ ...draft, waEnabled: v })}
+            />
+          </div>
+
+          <div className="space-y-2 pt-2">
+            <Label htmlFor="webhook">{t('admin.settings.whatsappWebhook')}</Label>
+            <Input
+              id="webhook"
+              type="url"
+              placeholder="https://"
+              value={draft.webhook}
+              onChange={(e) => setDraft({ ...draft, webhook: e.target.value })}
+            />
+          </div>
+
+          <div className="space-y-2 pt-2">
+            <Label>{t('admin.settings.whatsappRecipients')}</Label>
+            <p className="text-xs text-muted-foreground">
+              {t('admin.settings.whatsappRecipientsHelp')}
+            </p>
+            <div className="flex gap-2">
+              <Input
+                type="tel"
+                placeholder="+9627…"
+                value={newPhone}
+                onChange={(e) => setNewPhone(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault();
+                    addRecipient();
+                  }
+                }}
+              />
+              <Button type="button" size="sm" variant="outline" onClick={addRecipient}>
+                {t('admin.settings.add')}
+              </Button>
+            </div>
+            {draft.waRecipients.length > 0 && (
+              <div className="flex flex-wrap gap-1.5 pt-1">
+                {draft.waRecipients.map((p, i) => (
+                  <Badge key={`${p}-${i}`} variant="outline" className="gap-1 pl-2 pr-1 py-1">
+                    <span className="tabular-nums">{p}</span>
+                    <button
+                      type="button"
+                      onClick={() => removeRecipient(i)}
+                      className="ms-1 inline-flex h-5 w-5 items-center justify-center rounded-full hover:bg-secondary"
+                      aria-label={t('common.delete')}
+                    >
+                      <X className="h-3 w-3" />
+                    </button>
+                  </Badge>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+
+        <div className="flex items-center justify-between gap-2 rounded-md border border-border p-3">
+          <div className="min-w-0">
+            <Label className="cursor-pointer">{t('admin.settings.requireNoteOnUncheck')}</Label>
+            <p className="mt-0.5 text-xs text-muted-foreground">
+              {t('admin.settings.requireNoteOnUncheckHelp')}
+            </p>
+          </div>
+          <Switch
+            checked={draft.noteOnUncheck}
+            onCheckedChange={(v) => setDraft({ ...draft, noteOnUncheck: v })}
+          />
+        </div>
+
+        <div className="flex items-center justify-between gap-2 rounded-md border border-border p-3">
+          <div className="min-w-0">
+            <Label className="cursor-pointer">{t('admin.settings.allowBaristaInvEdit')}</Label>
+            <p className="mt-0.5 text-xs text-muted-foreground">
+              {t('admin.settings.allowBaristaInvEditHelp')}
+            </p>
+          </div>
+          <Switch
+            checked={draft.baristaInvEdit}
+            onCheckedChange={(v) => setDraft({ ...draft, baristaInvEdit: v })}
           />
         </div>
 
@@ -378,5 +504,138 @@ function SettingsTab() {
         </Button>
       </CardContent>
     </Card>
+  );
+}
+
+function AuditTab() {
+  const { t } = useTranslation();
+  const [action, setAction] = useState<string>('all');
+  const [since, setSince] = useState<string>('');
+
+  const actions = useAuditActions();
+  const log = useAuditLog({
+    action: action === 'all' ? undefined : action,
+    since: since ? new Date(since).toISOString() : undefined,
+    limit: 100,
+  });
+
+  return (
+    <div className="space-y-3">
+      <Card>
+        <CardContent className="grid grid-cols-2 gap-2 pt-4">
+          <div className="space-y-1">
+            <Label className="text-xs">{t('admin.audit.action')}</Label>
+            <Select value={action} onValueChange={setAction}>
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">{t('admin.audit.allActions')}</SelectItem>
+                {(actions.data ?? []).map((a) => (
+                  <SelectItem key={a} value={a}>{a}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="space-y-1">
+            <Label className="text-xs">{t('admin.audit.since')}</Label>
+            <Input
+              type="date"
+              value={since}
+              onChange={(e) => setSince(e.target.value)}
+            />
+          </div>
+        </CardContent>
+      </Card>
+
+      {log.isLoading ? (
+        <Skeleton className="h-64 w-full" />
+      ) : (log.data ?? []).length === 0 ? (
+        <Card>
+          <CardContent className="py-8 text-center text-sm text-muted-foreground">
+            {t('admin.audit.empty')}
+          </CardContent>
+        </Card>
+      ) : (
+        <Card>
+          <CardContent className="divide-y divide-border p-0">
+            {(log.data ?? []).map((row) => (
+              <AuditRowView key={row.id} row={row} />
+            ))}
+          </CardContent>
+        </Card>
+      )}
+    </div>
+  );
+}
+
+function AuditRowView({ row }: { row: AuditRow }) {
+  const { t, i18n } = useTranslation();
+  const [open, setOpen] = useState(false);
+  const hasDetail = row.before != null || row.after != null || !!row.note;
+  const when = new Date(row.created_at).toLocaleString(i18n.language);
+
+  return (
+    <div className="p-3">
+      <button
+        type="button"
+        onClick={() => hasDetail && setOpen((o) => !o)}
+        className={cn(
+          'flex w-full items-start gap-2 text-start',
+          !hasDetail && 'cursor-default',
+        )}
+      >
+        <div className="mt-0.5 shrink-0 text-muted-foreground">
+          {hasDetail ? (
+            open ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4 rtl:rotate-180" />
+          ) : (
+            <span className="inline-block h-4 w-4" />
+          )}
+        </div>
+        <div className="min-w-0 flex-1">
+          <div className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
+            <span className="font-medium tabular-nums text-xs text-muted-foreground">{when}</span>
+            <Badge variant="outline" className="text-[10px]">{row.action}</Badge>
+          </div>
+          <div className="mt-0.5 text-sm">
+            <span className="font-medium">{row.actor?.display_name ?? t('admin.audit.unknownActor')}</span>
+            {row.entity_type && (
+              <>
+                {' · '}
+                <span className="text-muted-foreground">{row.entity_type}</span>
+              </>
+            )}
+          </div>
+          {row.note && (
+            <p className="mt-0.5 text-xs text-muted-foreground">{row.note}</p>
+          )}
+        </div>
+      </button>
+
+      {open && hasDetail && (
+        <div className="mt-2 space-y-2 pl-6">
+          {row.before != null && (
+            <div>
+              <div className="text-[10px] uppercase tracking-wider text-muted-foreground">
+                {t('admin.audit.before')}
+              </div>
+              <pre className="mt-1 overflow-x-auto rounded bg-secondary/50 p-2 text-[11px] leading-relaxed">
+                {JSON.stringify(row.before, null, 2)}
+              </pre>
+            </div>
+          )}
+          {row.after != null && (
+            <div>
+              <div className="text-[10px] uppercase tracking-wider text-muted-foreground">
+                {t('admin.audit.after')}
+              </div>
+              <pre className="mt-1 overflow-x-auto rounded bg-secondary/50 p-2 text-[11px] leading-relaxed">
+                {JSON.stringify(row.after, null, 2)}
+              </pre>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
   );
 }

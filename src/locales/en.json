@@ -175,13 +175,32 @@
       "templates": "Templates",
       "categories": "Categories",
       "staff": "Staff",
-      "settings": "Settings"
+      "settings": "Settings",
+      "audit": "Audit"
     },
     "managerOnly": "Manager access only",
+    "audit": {
+      "action": "Action",
+      "since": "Since",
+      "allActions": "All actions",
+      "empty": "No audit events yet",
+      "before": "Before",
+      "after": "After",
+      "unknownActor": "system"
+    },
     "settings": {
       "openHours": "Open hours",
       "lowStockDebounce": "Low-stock debounce (hours)",
-      "whatsappWebhook": "WhatsApp webhook URL"
+      "whatsappWebhook": "WhatsApp webhook URL",
+      "whatsappEnabled": "Send WhatsApp alerts",
+      "whatsappRecipients": "Alert recipients",
+      "whatsappRecipientsHelp": "Phone numbers in international format (e.g. +9627…). They receive low-stock and force-close alerts.",
+      "add": "Add",
+      "requireNoteOnUncheck": "Require a note when un-ticking",
+      "requireNoteOnUncheckHelp": "If on, baristas must explain why they reverted a finished item.",
+      "allowBaristaInvEdit": "Allow baristas to edit inventory",
+      "allowBaristaInvEditHelp": "If off, baristas can log movements only; quantity edits and item create/edit stay manager-only.",
+      "saved": "Settings saved"
     },
     "staff": {
       "invite": "Invite user",

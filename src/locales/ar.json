@@ -175,13 +175,32 @@
       "templates": "القوالب",
       "categories": "الفئات",
       "staff": "الموظفين",
-      "settings": "الإعدادات"
+      "settings": "الإعدادات",
+      "audit": "السجل"
     },
     "managerOnly": "للمدير فقط",
+    "audit": {
+      "action": "الإجراء",
+      "since": "من تاريخ",
+      "allActions": "كل الإجراءات",
+      "empty": "ما في أحداث بالسجل",
+      "before": "قبل",
+      "after": "بعد",
+      "unknownActor": "النظام"
+    },
     "settings": {
       "openHours": "ساعات الدوام",
       "lowStockDebounce": "فاصل تنبيه النقص (ساعات)",
-      "whatsappWebhook": "رابط ويب هوك الواتساب"
+      "whatsappWebhook": "رابط ويب هوك الواتساب",
+      "whatsappEnabled": "إرسال تنبيهات واتساب",
+      "whatsappRecipients": "أرقام التنبيه",
+      "whatsappRecipientsHelp": "أرقام بصيغة دولية (مثال: +9627…) رح يوصلها تنبيه النقص والإقفال القسري.",
+      "add": "إضافة",
+      "requireNoteOnUncheck": "اطلب ملاحظة عند فك الإشارة",
+      "requireNoteOnUncheckHelp": "إذا مفعّل، الباريستا لازم يكتب سبب الرجعة على بند مخلَّص.",
+      "allowBaristaInvEdit": "اسمح للباريستا بتعديل المخزون",
+      "allowBaristaInvEditHelp": "إذا مطفّى، الباريستا بس يقدر يسجّل حركات؛ تعديل الكمية وإنشاء/تعديل الصنف للمدير.",
+      "saved": "تم حفظ الإعدادات"
     },
     "staff": {
       "invite": "ادعو موظف",
