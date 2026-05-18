@@ -1,9 +1,10 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ChevronDown, Package, Plus, Send, CheckCheck, X } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Input } from '@/components/ui/input';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useToast } from '@/components/ui/use-toast';
 import { useAuth } from '@/features/auth/AuthProvider';
@@ -95,6 +96,35 @@ function OrderCard({ order, manager }: { order: OrderWithItems; manager: boolean
   const receive = useMarkOrderReceived();
 
   const totalQty = order.items.reduce((sum, it) => sum + Number(it.quantity_ordered ?? 0), 0);
+  const editable = manager && order.status === 'sent';
+
+  const [received, setReceived] = useState<Record<string, string>>(() =>
+    Object.fromEntries(
+      order.items.map((it) => [
+        it.id,
+        String(it.quantity_received ?? it.quantity_ordered ?? 0),
+      ]),
+    ),
+  );
+
+  const partialPayload = useMemo(
+    () =>
+      order.items.map((it) => ({
+        line_id: it.id,
+        quantity_received: Number(received[it.id] ?? it.quantity_ordered ?? 0) || 0,
+      })),
+    [order.items, received],
+  );
+
+  const anyEdited = useMemo(
+    () =>
+      order.items.some(
+        (it) =>
+          Number(received[it.id] ?? it.quantity_ordered ?? 0) !==
+          Number(it.quantity_ordered ?? 0),
+      ),
+    [order.items, received],
+  );
 
   async function setStatus(status: 'sent' | 'cancelled') {
     try {
@@ -106,7 +136,10 @@ function OrderCard({ order, manager }: { order: OrderWithItems; manager: boolean
 
   async function markReceived() {
     try {
-      await receive.mutateAsync(order.id);
+      await receive.mutateAsync({
+        orderId: order.id,
+        received: anyEdited ? partialPayload : undefined,
+      });
       toast({ title: t('inventory.log.saved') });
     } catch (e) {
       toast({ variant: 'destructive', title: t('common.error'), description: (e as Error).message });
@@ -138,13 +171,41 @@ function OrderCard({ order, manager }: { order: OrderWithItems; manager: boolean
 
       {open && (
         <CardContent className="border-t border-border pt-3">
+          {editable && (
+            <p className="mb-2 text-xs text-muted-foreground">{t('orders.partialHint')}</p>
+          )}
           <ul className="space-y-1.5 text-sm">
             {order.items.map((it) => (
               <li key={it.id} className="flex items-center justify-between gap-2">
-                <span className="truncate">{isAr ? it.item.name_ar : it.item.name}</span>
-                <span className="font-mono text-xs tabular-nums text-muted-foreground">
-                  {it.quantity_ordered} {it.item.unit}
+                <span className="min-w-0 flex-1 truncate">
+                  {isAr ? it.item.name_ar : it.item.name}
                 </span>
+                {editable ? (
+                  <div className="flex items-center gap-1.5">
+                    <Input
+                      type="number"
+                      inputMode="decimal"
+                      step="any"
+                      min="0"
+                      className="h-8 w-20 text-end font-mono tabular-nums"
+                      value={received[it.id] ?? ''}
+                      onChange={(e) =>
+                        setReceived((r) => ({ ...r, [it.id]: e.target.value }))
+                      }
+                      aria-label={t('orders.receivedQty')}
+                    />
+                    <span className="w-12 text-xs text-muted-foreground">
+                      / {it.quantity_ordered} {it.item.unit}
+                    </span>
+                  </div>
+                ) : (
+                  <span className="font-mono text-xs tabular-nums text-muted-foreground">
+                    {order.status === 'received' && it.quantity_received != null
+                      ? `${it.quantity_received} / ${it.quantity_ordered}`
+                      : it.quantity_ordered}{' '}
+                    {it.item.unit}
+                  </span>
+                )}
               </li>
             ))}
           </ul>

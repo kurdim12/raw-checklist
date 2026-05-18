@@ -152,7 +152,9 @@
       "cancelled": "Cancelled"
     },
     "noLowStock": "Nothing is low — no order needed.",
-    "empty": "No orders yet"
+    "empty": "No orders yet",
+    "partialHint": "Adjust the received quantity if the supplier delivered less than ordered.",
+    "receivedQty": "Received quantity"
   },
   "schedule": {
     "title": "Schedule",

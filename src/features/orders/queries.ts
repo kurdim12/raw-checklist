@@ -44,9 +44,22 @@ export function useCreateOrderFromLowStock() {
 export function useMarkOrderReceived() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: async (orderId: string) => {
-      const { error } = await supabase.rpc('receive_stock_order', { p_order_id: orderId });
-      if (error) throw error;
+    mutationFn: async (args: {
+      orderId: string;
+      received?: Array<{ line_id: string; quantity_received: number }>;
+    }) => {
+      if (args.received && args.received.length > 0) {
+        const { error } = await supabase.rpc('receive_stock_order_partial', {
+          p_order_id: args.orderId,
+          p_received: args.received,
+        });
+        if (error) throw error;
+      } else {
+        const { error } = await supabase.rpc('receive_stock_order', {
+          p_order_id: args.orderId,
+        });
+        if (error) throw error;
+      }
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['stockOrders'] });
