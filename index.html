@@ -16,11 +16,14 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Cairo:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <title>Raw Smith Ops</title>
     <script>
-      // One-time kill switch: rescues anyone whose browser cached the
-      // pre-2026-05-19 service worker that crashes on registration with
-      // "non-precached-url :: [/index.html]". Detects the workbox error,
-      // unregisters every SW under this origin, clears caches, and
-      // reloads so the fixed SW can install fresh.
+      // Self-heal kill switch: rescues anyone whose browser is stuck
+      // on a stale service worker — either the pre-2026-05-19 SW that
+      // crashes on registration with "non-precached-url :: [/index.html]",
+      // or a later SW that's silently serving a precached index.html
+      // pointing at deleted asset hashes (the JS module 404s and React
+      // never mounts, with no workbox error in the console). On any
+      // detected failure we unregister every SW, wipe all caches, and
+      // reload once so the current SW can install fresh.
       (function () {
         if (!('serviceWorker' in navigator)) return;
         var recovering = false;
@@ -51,6 +54,7 @@
             location.reload();
           });
         }
+        // Original workbox crash signature (pre-fix SW still cached).
         window.addEventListener('error', function (e) {
           var msg = (e && (e.message || (e.error && e.error.message))) || '';
           if (msg.indexOf('non-precached-url') !== -1 || msg.indexOf('workbox') !== -1) {
@@ -63,6 +67,31 @@
           if (msg.indexOf('non-precached-url') !== -1) {
             recover('rejection');
           }
+        });
+        // Stale precache pointing at a Vite asset hash that no longer
+        // exists. Resource load failures don't bubble, so this listener
+        // runs in capture phase.
+        window.addEventListener('error', function (e) {
+          var t = e && e.target;
+          if (!t || t.tagName !== 'SCRIPT') return;
+          var src = t.src || '';
+          if (src.indexOf('/assets/') !== -1) {
+            recover('asset-404');
+          }
+        }, true);
+        // Last-resort: if React hasn't mounted after the page settled
+        // and there is a registered SW, assume something silent went
+        // wrong and self-heal. Guarded by the sessionStorage marker so
+        // a legitimately slow first paint can't loop.
+        window.addEventListener('load', function () {
+          setTimeout(function () {
+            if (recovering) return;
+            var root = document.getElementById('root');
+            if (!root || root.children.length > 0) return;
+            navigator.serviceWorker.getRegistrations().then(function (rs) {
+              if (rs && rs.length > 0) recover('no-mount');
+            }).catch(function () {});
+          }, 6000);
         });
       })();
     </script>
