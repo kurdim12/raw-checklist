@@ -15,6 +15,57 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Cairo:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <title>Raw Smith Ops</title>
+    <script>
+      // One-time kill switch: rescues anyone whose browser cached the
+      // pre-2026-05-19 service worker that crashes on registration with
+      // "non-precached-url :: [/index.html]". Detects the workbox error,
+      // unregisters every SW under this origin, clears caches, and
+      // reloads so the fixed SW can install fresh.
+      (function () {
+        if (!('serviceWorker' in navigator)) return;
+        var recovering = false;
+        function recover(reason) {
+          if (recovering) return;
+          recovering = true;
+          try {
+            sessionStorage.setItem('sw-recovered', reason || '1');
+          } catch (e) {}
+          Promise.all([
+            navigator.serviceWorker
+              .getRegistrations()
+              .then(function (rs) {
+                return Promise.all(rs.map(function (r) { return r.unregister(); }));
+              })
+              .catch(function () {}),
+            (typeof caches !== 'undefined'
+              ? caches.keys().then(function (keys) {
+                  return Promise.all(keys.map(function (k) { return caches.delete(k); }));
+                })
+              : Promise.resolve()
+            ).catch(function () {}),
+          ]).then(function () {
+            // Avoid an infinite reload loop if recovery itself fails.
+            var marker = 'sw-recovery-reloaded';
+            if (sessionStorage.getItem(marker)) return;
+            sessionStorage.setItem(marker, '1');
+            location.reload();
+          });
+        }
+        window.addEventListener('error', function (e) {
+          var msg = (e && (e.message || (e.error && e.error.message))) || '';
+          if (msg.indexOf('non-precached-url') !== -1 || msg.indexOf('workbox') !== -1) {
+            recover('error');
+          }
+        });
+        window.addEventListener('unhandledrejection', function (e) {
+          var reason = e && e.reason;
+          var msg = (reason && (reason.message || String(reason))) || '';
+          if (msg.indexOf('non-precached-url') !== -1) {
+            recover('rejection');
+          }
+        });
+      })();
+    </script>
   </head>
   <body class="bg-olive text-cream antialiased">
     <div id="root"></div>
