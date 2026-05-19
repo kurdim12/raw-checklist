@@ -26,19 +26,19 @@ export default defineConfig({
     },
     workbox: {
       globPatterns: ['**/*.{js,css,html,svg,png,woff2}'],
-      // Replace the previous SW immediately so users don't get stuck on
-      // a stale index.html pointing at deleted JS chunks.
       skipWaiting: true,
       clientsClaim: true,
       cleanupOutdatedCaches: true,
-      navigateFallback: '/index.html',
-      navigateFallbackDenylist: [/^\/rest\/v1\//, /^\/auth\/v1\//],
+      // Intentionally NOT setting navigateFallback: vite-plugin-pwa
+      // translates it into a NavigationRoute(createHandlerBoundToURL)
+      // that is registered before runtimeCaching and serves the
+      // precached index.html for every navigation — which is exactly
+      // the "blank olive page after deploy" bug, because that
+      // precached HTML still references deleted asset hashes. The
+      // NetworkFirst rule below handles navigations instead, and
+      // falls back to its own cache for offline.
       runtimeCaching: [
         {
-          // Always fetch fresh HTML for navigations — falls back to the
-          // cached index.html only when offline. Fixes the "blank olive
-          // page on refresh after deploy" bug where the precached
-          // index.html still pointed at old JS chunk hashes that 404.
           urlPattern: ({ request }) => request.mode === 'navigate',
           handler: 'NetworkFirst',
           options: {
