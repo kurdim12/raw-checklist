@@ -32,9 +32,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     let mounted = true;
+    let resolved = false;
+
+    // Belt-and-suspenders watchdog: if getSession() somehow still hangs
+    // after the noLock change in supabase.ts (e.g. a future SDK upgrade
+    // regresses, or a Supabase outage stalls the refresh), force the
+    // loading state off so the user lands on /login instead of an
+    // infinite skeleton. onAuthStateChange will fill the session in
+    // later if the real call eventually resolves.
+    const watchdog = setTimeout(() => {
+      if (!mounted || resolved) return;
+      resolved = true;
+      setLoading(false);
+    }, 4000);
 
     supabase.auth.getSession().then(async ({ data }) => {
-      if (!mounted) return;
+      if (!mounted || resolved) return;
+      resolved = true;
+      clearTimeout(watchdog);
       setSession(data.session);
       if (data.session?.user.id) {
         try {
@@ -45,6 +60,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         }
       }
       if (mounted) setLoading(false);
+    }).catch(() => {
+      if (!mounted || resolved) return;
+      resolved = true;
+      clearTimeout(watchdog);
+      setLoading(false);
     });
 
     const { data: sub } = supabase.auth.onAuthStateChange(async (_event, s) => {
@@ -63,6 +83,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     return () => {
       mounted = false;
+      clearTimeout(watchdog);
       sub.subscription.unsubscribe();
     };
   }, []);
