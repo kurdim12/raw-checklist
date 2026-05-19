@@ -181,6 +181,7 @@
   "admin": {
     "title": "الإدارة",
     "tabs": {
+      "dashboard": "اليوم",
       "templates": "القوالب",
       "categories": "الفئات",
       "staff": "الموظفين",
@@ -188,6 +189,16 @@
       "announcements": "تنبيهات",
       "compliance": "الالتزام",
       "audit": "السجل"
+    },
+    "dashboard": {
+      "complianceToday": "الالتزام",
+      "runsToday": "الجولات",
+      "scheduledToday": "المجدولين",
+      "lowStock": "مخزون منخفض",
+      "activeNotices": "تنبيهات",
+      "ordersDraft": "طلبات مسودة",
+      "ordersSent": "طلبات مرسلة",
+      "error": "تعذّر تحميل ملخّص اليوم."
     },
     "announcements": {
       "new": "تنبيه جديد",

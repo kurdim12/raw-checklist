@@ -181,6 +181,7 @@
   "admin": {
     "title": "Admin",
     "tabs": {
+      "dashboard": "Today",
       "templates": "Templates",
       "categories": "Categories",
       "staff": "Staff",
@@ -188,6 +189,16 @@
       "announcements": "Notices",
       "compliance": "Compliance",
       "audit": "Audit"
+    },
+    "dashboard": {
+      "complianceToday": "Compliance",
+      "runsToday": "Runs",
+      "scheduledToday": "Scheduled",
+      "lowStock": "Low stock",
+      "activeNotices": "Notices",
+      "ordersDraft": "Draft orders",
+      "ordersSent": "Sent orders",
+      "error": "Couldn't load today's snapshot."
     },
     "announcements": {
       "new": "New notice",

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { KeyRound, LogOut, UserPlus, X, ChevronDown, ChevronRight, Megaphone, Pin, Trash2 } from 'lucide-react';
+import { KeyRound, LogOut, UserPlus, X, ChevronDown, ChevronRight, Megaphone, Pin, Trash2, AlertTriangle, ClipboardCheck, FileEdit, Send, CalendarDays, Bell, Activity } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -39,6 +39,7 @@ import {
   useDeleteAnnouncement,
   type AnnouncementRow,
 } from '@/features/admin/announcements';
+import { useAdminDashboard } from '@/features/admin/dashboard';
 import { Textarea } from '@/components/ui/textarea';
 import { cn } from '@/lib/utils';
 import type { Profile } from '@/types/database';
@@ -70,8 +71,11 @@ export function AdminRoute() {
         </Button>
       </div>
 
-      <Tabs defaultValue="staff">
+      <Tabs defaultValue="dashboard">
         <TabsList className="w-full">
+          <TabsTrigger value="dashboard" className="flex-1">
+            {t('admin.tabs.dashboard')}
+          </TabsTrigger>
           <TabsTrigger value="staff" className="flex-1">
             {t('admin.tabs.staff')}
           </TabsTrigger>
@@ -89,6 +93,9 @@ export function AdminRoute() {
           </TabsTrigger>
         </TabsList>
 
+        <TabsContent value="dashboard">
+          <DashboardTab />
+        </TabsContent>
         <TabsContent value="staff">
           <StaffTab />
         </TabsContent>
@@ -106,6 +113,116 @@ export function AdminRoute() {
         </TabsContent>
       </Tabs>
     </div>
+  );
+}
+
+function DashboardTab() {
+  const { t, i18n } = useTranslation();
+  const dash = useAdminDashboard();
+
+  if (dash.isLoading) {
+    return (
+      <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+        {Array.from({ length: 7 }).map((_, i) => (
+          <Skeleton key={i} className="h-24 w-full" />
+        ))}
+      </div>
+    );
+  }
+
+  if (dash.isError || !dash.data) {
+    return (
+      <Card>
+        <CardContent className="py-8 text-center text-sm text-muted-foreground">
+          {t('admin.dashboard.error')}
+        </CardContent>
+      </Card>
+    );
+  }
+
+  const d = dash.data;
+  const dateLabel = new Date(d.date + 'T00:00:00').toLocaleDateString(i18n.language, {
+    weekday: 'long',
+    month: 'short',
+    day: 'numeric',
+  });
+
+  return (
+    <div className="space-y-3">
+      <div className="px-1 text-xs uppercase tracking-wider text-muted-foreground">{dateLabel}</div>
+
+      <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+        <DashStat
+          icon={<ClipboardCheck className="h-4 w-4" />}
+          label={t('admin.dashboard.complianceToday')}
+          value={`${d.compliance_today}%`}
+          tone={d.compliance_today >= 90 ? 'good' : d.compliance_today < 70 ? 'bad' : 'muted'}
+        />
+        <DashStat
+          icon={<Activity className="h-4 w-4" />}
+          label={t('admin.dashboard.runsToday')}
+          value={d.runs_today}
+        />
+        <DashStat
+          icon={<CalendarDays className="h-4 w-4" />}
+          label={t('admin.dashboard.scheduledToday')}
+          value={d.scheduled_today}
+        />
+        <DashStat
+          icon={<AlertTriangle className="h-4 w-4" />}
+          label={t('admin.dashboard.lowStock')}
+          value={d.low_stock_count}
+          tone={d.low_stock_count > 0 ? 'bad' : 'muted'}
+        />
+        <DashStat
+          icon={<Bell className="h-4 w-4" />}
+          label={t('admin.dashboard.activeNotices')}
+          value={d.active_notices}
+        />
+        <DashStat
+          icon={<FileEdit className="h-4 w-4" />}
+          label={t('admin.dashboard.ordersDraft')}
+          value={d.orders_draft}
+        />
+        <DashStat
+          icon={<Send className="h-4 w-4" />}
+          label={t('admin.dashboard.ordersSent')}
+          value={d.orders_sent}
+        />
+      </div>
+    </div>
+  );
+}
+
+function DashStat({
+  icon,
+  label,
+  value,
+  tone,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  value: number | string;
+  tone?: 'good' | 'bad' | 'muted';
+}) {
+  return (
+    <Card>
+      <CardContent className="py-3">
+        <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-wider text-muted-foreground">
+          <span className="text-muted-foreground/70">{icon}</span>
+          <span className="truncate">{label}</span>
+        </div>
+        <div
+          className={cn(
+            'mt-1 text-2xl font-bold tabular-nums',
+            tone === 'good' && 'text-emerald-600 dark:text-emerald-400',
+            tone === 'bad' && 'text-destructive',
+          )}
+        >
+          {value}
+        </div>
+      </CardContent>
+    </Card>
   );
 }
 
